@@ -6,6 +6,8 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+@php use App\View\Components\Alert; @endphp
+
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -160,6 +162,9 @@
                                 <img class="rounded-circle" src="{{ asset('storage/' . auth()->user()->image) }}" width="30" height="30" alt="User Image">
                                 {{ auth()->user()->name }}
                             </a>
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+                                <a class="dropdown-item" href="{{ route('settings.index') }}">Settings</a>
+                            </div>
                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
                                 <a class="dropdown-item" href="{{ route('logout') }}">Déconnexion</a>
                             </div>

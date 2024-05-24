@@ -7,6 +7,7 @@ use App\Http\Controllers\test;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PublicationController;
+use App\Http\Controllers\SettingsController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -95,4 +96,15 @@ Route::resource('publication',PublicationController::class);
 
 
 Route::get('/getActiveUsers', [test::class, 'getActiveUsers'])->name('activeUser');
+Route::get('/settings', [test::class, 'settings'])->name('settings');
 
+
+
+
+Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
+
+Route::post('/settings/profile', [SettingsController::class, 'updateProfile'])->name('settings.updateProfile');
+Route::post('/settings/account', [SettingsController::class, 'updateAccount'])->name('settings.updateAccount');
+Route::post('/settings/privacy', [SettingsController::class, 'updatePrivacy'])->name('settings.updatePrivacy');
+Route::post('/settings/notifications', [SettingsController::class, 'updateNotifications'])->name('settings.updateNotifications');
+Route::post('/settings/security', [SettingsController::class, 'updateSecurity'])->name('settings.updateSecurity');

@@ -47,6 +47,11 @@ class test extends Controller
     {
         return view('user.create');
     }
+    public function settings ()
+
+    {
+        return view('user.settings');
+    }
     public function formul(){
         return view('hello');
     }
@@ -133,5 +138,6 @@ class test extends Controller
         return response()->json(['users' => $users]);
     }
 
+    
 
 }
