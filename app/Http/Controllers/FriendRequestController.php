@@ -7,39 +7,108 @@ use App\Models\FriendRequest;
 use App\Models\Notification;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\View;
 
 class FriendRequestController extends Controller
 {
-    public function addFriend($id)
-    {
-        $user =  User::findOrFail($id);
 
+    public function friendrequestlist()
+    {
+        $friendRequests = Friend::where('friend_id', Auth::id())
+                                        ->where('status', 'pending')
+                                        ->with('sender')
+                                        ->get();
+       
+        return view('friends.request', compact('friendRequests'));
+    }
+
+    
+    public function send($id)
+    {
+        $receiver = User::findOrFail($id);
+    $sender_id = Auth::id();
+   
+    // Check if request already exists from either side
+    if (Friend::where([
+        ['user_id', $sender_id],
+        ['friend_id', $receiver->id],
+    ])->orWhere([
+        ['user_id', $receiver->id],
+        ['friend_id', $sender_id],
+    ])->exists()) {
+        return response()->json(['error' => 'Friend request already sent or received.'], 400);
+    } else {
+        // Check if sender has already sent a request to receiver
+        if (Friend::where('user_id', $receiver->id)->where('friend_id', $sender_id)->exists()) {
+            return response()->json(['error' => 'Friend request already sent.'], 400);
+        }
+        
+        Friend::create([
+            "user_id" => auth()->id(),
+            "friend_id" => $receiver->id,
+        ]);
+        Notification::create([
+            "type" => "friend_request",
+            "user_id" => $receiver->id,
+            "message" => auth()->user()->name . " sent you a friend request",
+            "url" => "#",
+        ]);
+        
+        return response()->json(['message' => 'Friend request sent to ' . $receiver->name]);
+    }
+
+
+    }
+
+  
+    
+    public function accept($id)
+    {
+        $friendRequest = Friend::findOrFail($id);
+
+        if (!$friendRequest || $friendRequest->friend_id != Auth::id()) {
+            return response()->json(['error' => 'Invalid friend request.'], 403);
+        }
 
         DB::beginTransaction();
         try {
-            Friend::firstOrCreate([
-                "user_id" => auth()->id(),
-                "friend_id" => $user->id,
-            ]);
+
+            $user = User::findOrFail($id);
+            $friendRequest->update(['status' => 'accepted']);
+            $friendRequest->save();
+
             Notification::create([
-                "type" => "friend_request",
+                "type" => "friend_accepted",
                 "user_id" => $user->id,
-                "message" => auth()->user()->name . " send you friend request",
+                "message" => auth()->user()->name . " accepted your friend request",
                 "url" => "#",
             ]);
+
             DB::commit();
-            return response()->json(['message' => 'Friend request sent to ' . $user->name]);
-
-
         } catch (\Throwable $th) {
             DB::rollBack();
-            
-            return response()->json(['message' => 'Error sending friend request'], 500);
-
+            throw $th;
         }
         
+        return response()->json(['success' => 'Friend request accepted.'], 200);
+    }
+
+    public function refuse($id)
+    {
+        $friendRequest = Friend::find($id);
+
+        
+
+        if ($friendRequest->friend_id != Auth::id()) {
+            return response()->json(['error' => 'Unauthorized action.'], 403);
+        }
+
+        $friendRequest->delete();
+
+
+        return response()->json(['success' => 'Friend request refused.'], 200);
     }
 
     public function Removerequest($id)
@@ -67,6 +136,7 @@ class FriendRequestController extends Controller
         }
         
     }
+ 
 
     public function checkFriendship($userId)
     {

@@ -21,6 +21,9 @@ Route::get('/', function () {
 Route::get('/chat/fetchMessages', [ChatController::class, 'fetchMessages'])->name('chat.fetchMessages');
 Route::get('/chat/pollMessages', [ChatController::class, 'pollMessages'])->name('chat.pollMessages');
     
+
+
+
 Route::get('/search-users', [ChatController::class, 'searchUsers']);
 Route::get('/chat', [ChatController::class, 'index'])->name('chat.index');
 Route::post('/chat/send', [ChatController::class, 'sendMessage'])->name('chat.send');
@@ -29,7 +32,13 @@ Route::post('/chat/send', [ChatController::class, 'sendMessage'])->name('chat.se
 Route::get('/friends/search', [FriendController::class, 'search'])->name('friends.search');
 
 
-Route::post('/add-friend/{id}', [FriendRequestController::class, 'addFriend'])->name('add.friend');
+//friend request
+Route::get('/friend-requests', [FriendRequestController::class, 'friendrequestlist'])->name('friend-requests');
+Route::post('/friend-request/send/{id}', [FriendRequestController::class, 'send'])->name('friend-request.send');
+Route::post('/friend-request/accept/{id}', [FriendRequestController::class, 'accept'])->name('friend-request.accept');
+Route::post('/friend-request/refuse/{id}', [FriendRequestController::class, 'refuse'])->name('friend-request.refuse');
+
+//Route::post('/add-friend/{id}', [FriendRequestController::class, 'addFriend'])->name('add.friend');
 Route::post('/remove-request/{id}', [FriendRequestController::class, 'removeRequest'])->name('remove.request');
 Route::get('/check-friendship/{id}', [FriendRequestController::class, 'checkFriendship'])->name('check.friendship');
 
@@ -42,7 +51,7 @@ Route::post('/accept-friend/{profileUserId}', [FriendRequestController::class, '
 Route::post('/user/{id}/friend-request', [FriendRequestController::class, 'toggleFriendRequest'])->name('user.toggle-friend-request');
 Route::post('/friend-request/send/{receiverId}', [FriendRequestController::class, 'sendRequest']);
 Route::post('/friend-request/respond/{requestId}', [FriendRequestController::class, 'respondToRequest']);
-Route::get('/friend-requests', [FriendRequestController::class, 'incomingRequests'])->name('friend-requests');
+
 
 Route::put('/notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
 
@@ -53,12 +62,6 @@ Route::put('/notifications/{id}/mark-as-read', [NotificationController::class, '
 Route::get('/notifications/fetch', [NotificationController::class, 'showNotifications'])->name('notifications.fetch');
 
 
-
-
-Route::get('/publications/{id}/likes', [PublicationController::class, 'likes'])->name('publications.likes');
-Route::post('/publications/like/{id}', [PublicationController::class, 'like'])->name('publications.like');
-Route::post('/publications/dislike/{id}', [PublicationController::class, 'dislike'])->name('publications.dislike');
-Route::post('/publications/toggle-like/{id}', [PublicationController::class, 'toggleLike'])->name('publications.toggle-like');
 
 
 
@@ -78,33 +81,24 @@ Route::resource('user',test::class);
 
 //partie publicatioons
 Route::resource('publication',PublicationController::class);
+Route::get('/publications/{id}/likes', [PublicationController::class, 'likes'])->name('publications.likes');
+Route::post('/publications/like/{id}', [PublicationController::class, 'like'])->name('publications.like');
+Route::post('/publications/dislike/{id}', [PublicationController::class, 'dislike'])->name('publications.dislike');
+Route::post('/publications/toggle-like/{id}', [PublicationController::class, 'toggleLike'])->name('publications.toggle-like');
 
 
-
-
-//Route::name('user.')->prefix('users')->group(function(){
-//  Route::controller(test::class)->group(function(){
-//Route::get('all', 'showAllusers')->name('index');
-//Route::get('create', 'create' )->name('create');
-//Route::middleware(['web'])->post('/user/store',  'store' )->name('store');
-//Route::delete('{user}' ,'destroy')->name('destroy');
-//Route::get('/{user}', 'show')->where('id','\d+')->name('show');
- //   });
-//});
 
 
 
 
 Route::get('/getActiveUsers', [test::class, 'getActiveUsers'])->name('activeUser');
-Route::get('/settings', [test::class, 'settings'])->name('settings');
 
 
-
-
+//settings
 Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
-
 Route::post('/settings/profile', [SettingsController::class, 'updateProfile'])->name('settings.updateProfile');
 Route::post('/settings/account', [SettingsController::class, 'updateAccount'])->name('settings.updateAccount');
-Route::post('/settings/privacy', [SettingsController::class, 'updatePrivacy'])->name('settings.updatePrivacy');
-Route::post('/settings/notifications', [SettingsController::class, 'updateNotifications'])->name('settings.updateNotifications');
-Route::post('/settings/security', [SettingsController::class, 'updateSecurity'])->name('settings.updateSecurity');
+Route::post('/settings/image', [SettingsController::class, 'updateProfileimage'])->name('settings.image');
+
+
+Route::get('/friends', [FriendController::class, 'index'])->name('friends.index');

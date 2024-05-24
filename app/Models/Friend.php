@@ -20,6 +20,16 @@ class Friend extends Model
         
     ];
 
+    public function sender()
+    {
+        return $this->belongsTo(User::class,'user_id' );
+    }
+
+    public function receiver()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function user() :BelongsTo{
         return $this->belongsTo(User::class);
     }

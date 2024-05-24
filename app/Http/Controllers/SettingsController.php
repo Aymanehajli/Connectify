@@ -17,12 +17,29 @@ class SettingsController extends Controller
         $user = Auth::user();
         return view('settings.index', compact('user'));
     }
+    public function updateProfileimage(Request $request)
+    {
+        $request->validate([
+            'image' => 'required|image|mimes:png,jpg,svg,jpeg,jfif'
+        ]);
+        
+        DB::table('users')
+    ->where('id', Auth::id())
+    ->update([
+        'image'=> $request->file('image')->store('userprofile','public'),
+        
+    ]);
+       
+        return back()->with('status', 'Profile picture updated successfully.');
+    }
+
 
     public function updateProfile(Request $request)
     {
         $request->validate([
             'username' => 'required|string|max:255',
             'email' => 'required|string|email|max:255',
+            
         ]);
         
 
@@ -31,10 +48,11 @@ class SettingsController extends Controller
         ->update([
             'name' => $request->username,
             'email' => $request->email,
+           
         ]);
-        $statusMessage = 'Profile updated successfully.';
        
-        return back()->with('status', $statusMessage);
+       
+        return back()->with('status', 'Account updated successfully.');
         
     }
 

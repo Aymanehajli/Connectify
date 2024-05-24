@@ -78,4 +78,14 @@ class User extends Authenticatable
         $this->active_status = !$this->active_status; // Toggle active status
         $this->save(); // Save the updated status
     }
+
+    public function sentFriendRequests()
+    {
+        return $this->hasMany(Friend::class, 'sender_id');
+    }
+
+    public function receivedFriendRequests()
+    {
+        return $this->hasMany(Friend::class, 'receiver_id');
+    }
 }

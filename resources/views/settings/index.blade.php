@@ -52,9 +52,8 @@
                 <ul class="settings-nav">
                     <li><a href="#profile" class="settings-link">Profile Settings</a></li>
                     <li><a href="#account" class="settings-link">Account Settings</a></li>
-                    <li><a href="#privacy" class="settings-link">Privacy Settings</a></li>
-                    <li><a href="#notifications" class="settings-link">Notification Settings</a></li>
-                    <li><a href="#security" class="settings-link">Security Settings</a></li>
+                    
+                   
                 </ul>
             </nav>
         </aside>
@@ -68,16 +67,31 @@
 @else
     <div class="alert alert-warning">
     {{ session('status') }}
+    baqen !!
     </div>
 @endif
 
-
+<section id="image">
+                <h2>Profile image</h2>
+                <form action="{{ route('settings.image') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    
+                    <div class="form-group">
+                        <label for="username">Profile image</label>
+                        <input type="file" class="form-control" id="image" name="image" value="{{ old('image', $user->image) }}" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </form>
+                <hr>
+            </section>
            
 
             <section id="profile">
                 <h2>Profile Settings</h2>
                 <form action="{{ route('settings.updateProfile') }}" method="POST">
                     @csrf
+                    
                     <div class="form-group">
                         <label for="username">Username</label>
                         <input type="text" class="form-control" id="username" name="username" value="{{ old('username', $user->name) }}" required>
@@ -90,7 +104,7 @@
                 </form>
                 <hr>
             </section>
-
+             <hr>
             <section id="account">
                 <h2>Account Settings</h2>
                 <form action="{{ route('settings.updateAccount') }}" method="POST">

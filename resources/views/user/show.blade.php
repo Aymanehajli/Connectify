@@ -79,7 +79,7 @@
 
     function addFriend() {
         // Send friend request
-        axios.post("{{ route('add.friend', $user->id) }}")
+        axios.post("{{ route('friend-request.send', $user->id) }}")
             .then(function (response) {
                 alert(response.data.message);
                 checkFriendship(); // Update friendship buttons
