@@ -118,9 +118,11 @@
                             <a class="nav-link" href="{{ route('publication.index') }}">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('publication.create') }}">Ajouter publication</a>
+                            <a class="nav-link" href="{{ route('friends.index') }}">Friends</a>
                         </li>
-
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('friend-requests') }}">Friend requests</a>
+                        </li>
 
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('chat.index') }}">Messages</a>
@@ -156,20 +158,19 @@
                 
   
                 @auth
-                    <ul class="navbar-nav ml-auto">
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <img class="rounded-circle" src="{{ asset('storage/' . auth()->user()->image) }}" width="30" height="30" alt="User Image">
-                                {{ auth()->user()->name }}
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-                                <a class="dropdown-item" href="{{ route('settings.index') }}">Settings</a>
-                            </div>
-                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-                                <a class="dropdown-item" href="{{ route('logout') }}">Déconnexion</a>
-                            </div>
-                        </li>
-                    </ul>
+                <ul class="navbar-nav ml-auto">
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <img class="rounded-circle" src="{{ asset('storage/' . auth()->user()->image) }}" width="30" height="30" alt="User Image">
+            {{ auth()->user()->name }}
+        </a>
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+            <a class="dropdown-item" href="{{ route('settings.index') }}">Settings</a>
+            <a class="dropdown-item" href="{{ route('logout') }}">Déconnexion</a>
+        </div>
+    </li>
+</ul>
+
                 @endauth
             </div>
         </div>
