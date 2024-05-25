@@ -128,9 +128,7 @@
                             <a class="nav-link" href="{{ route('chat.index') }}">Messages</a>
                         </li>
                         
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('block.index') }}">blocked</a>
-                        </li>
+                       
                         
         <!-- Notifications Dropdown -->
         <div class="dropdown">
@@ -168,6 +166,7 @@
             {{ auth()->user()->name }}
         </a>
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+        <a class="dropdown-item" href="{{ route('block.index') }}">Blocked users</a>
             <a class="dropdown-item" href="{{ route('settings.index') }}">Settings</a>
             <a class="dropdown-item" href="{{ route('logout') }}">Déconnexion</a>
         </div>

@@ -66,11 +66,12 @@ class FriendRequestController extends Controller
     
     public function accept($id)
     {
-        $friendRequest = Friend::findOrFail($id);
+        $friendRequest = Friend::find($id);
 
         if (!$friendRequest || $friendRequest->friend_id != Auth::id()) {
             return response()->json(['error' => 'Invalid friend request.'], 403);
         }
+        
 
         DB::beginTransaction();
         try {

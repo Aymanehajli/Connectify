@@ -85,6 +85,17 @@
                 console.error(error.response.data);
             });
     }
+    
+    function acceptFriend() {
+        axios.post("{{ route('friend-request.accept', $user->id) }}")
+            .then(function (response) {
+                alert(response.data.message);
+                checkFriendship();
+            })
+            .catch(function (error) {
+                console.error(error.response.data);
+            });
+    }
 
     function checkFriendship() {
         axios.get("{{ route('check.friendship', $user->id) }}")
@@ -106,16 +117,7 @@
             });
     }
 
-    function acceptFriend() {
-        axios.post("{{ route('friend-request.accept', $user->id) }}")
-            .then(function (response) {
-                alert(response.data.message);
-                checkFriendship();
-            })
-            .catch(function (error) {
-                console.error(error.response.data);
-            });
-    }
+   
 </script>
 
 <script>
