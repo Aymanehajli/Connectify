@@ -10,6 +10,24 @@ use Illuminate\Support\Facades\Auth;
 
 class BlockController extends Controller
 {
+
+    public function index() {
+        $user = Auth::user();
+       
+        $blocked = $this->getBlocks($user->id);
+       
+
+        return view('Blocks.index', compact('blocked'));
+
+    }
+    private function getBlocks($userId)
+    {
+        $blocklists = Block::where('blocked_id', $userId)->pluck('blocker_id');
+       
+        return User::whereIn('id', $blocklists)->get();
+    }
+
+
     public function block($blockedId)
     {
         $blockerId = auth()->id();

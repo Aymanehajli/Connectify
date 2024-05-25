@@ -9,6 +9,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PublicationController;
 use App\Http\Controllers\SettingsController;
+use App\Models\Block;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -119,6 +120,7 @@ Route::get('/friends', [FriendController::class, 'index'])->name('friends.index'
 
 
 //block user
+Route::get('/blockedusers', [BlockController::class, 'index'])->name('block.index');
 Route::post('/block/{id}', [BlockController::class, 'block'])->name('block');
 Route::post('/unblock/{id}', [BlockController::class, 'unblock'])->name('unblock');
 Route::get('/blocked', function () {

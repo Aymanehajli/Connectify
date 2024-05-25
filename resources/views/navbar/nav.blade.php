@@ -128,7 +128,10 @@
                             <a class="nav-link" href="{{ route('chat.index') }}">Messages</a>
                         </li>
                         
-      
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('block.index') }}">blocked</a>
+                        </li>
+                        
         <!-- Notifications Dropdown -->
         <div class="dropdown">
             <button class="nav-link dropdown-toggle" type="#" id="notificationsDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
