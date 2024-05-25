@@ -97,9 +97,15 @@ class test extends Controller
 
 
     //supprimer un compte
-    public function destroy(User $user){
+    public function destroy(Request $request){
+        $user = User::find(auth()->id());
+        $user->toggleActiveStatus();
+        Auth::logout();
+        $request->session()->flush();
+
         $user->delete();   
-        return to_route('user.index')->with('success','Votre compte est bien supprim"');
+    
+       return to_route('loginshow');
     }
 
 

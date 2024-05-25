@@ -71,6 +71,7 @@ class SettingsController extends Controller
        
         return back()->with('status', 'Account updated successfully.');
     }
+    
 
     
     

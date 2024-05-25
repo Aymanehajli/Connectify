@@ -52,7 +52,8 @@
                 <ul class="settings-nav">
                     <li><a href="#profile" class="settings-link">Profile Settings</a></li>
                     <li><a href="#account" class="settings-link">Account Settings</a></li>
-                    
+                    <li><a href="#delete" class="settings-link">Delete Account</a></li>
+
                    
                 </ul>
             </nav>
@@ -121,7 +122,16 @@
                 </form>
                 <hr>
             </section>
-
+            <section id="delete">
+                <h2>Delete account :</h2>
+                <form action="{{route('user.destroy',$user->id)}}" method="post">
+                    @method('DELETE')
+                       @csrf
+                    
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+                <hr>
+            </section>
            
 
             

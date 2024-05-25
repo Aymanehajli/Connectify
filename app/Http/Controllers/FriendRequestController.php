@@ -140,12 +140,23 @@ class FriendRequestController extends Controller
 
     public function checkFriendship($userId)
     {
-        $friendRequestSent = Friend::where('user_id', auth()->id())
-            ->where('friend_id', $userId)
-            ->exists();
+        $authId = Auth::id();
 
-        return response()->json(['friendRequestSent' => $friendRequestSent]);
-     }
+        $friendRequestSent = Friend::where('user_id', $authId)->where('friend_id', $userId)->exists();
+        $friendRequestReceived = Friend::where('user_id', $userId)->where('friend_id', $authId)->exists();
+        $friends = Friend::where(function ($query) use ($authId, $userId) {
+            $query->where('user_id', $authId)->where('friend_id', $userId)->where('status', 'accepted');
+        })->orWhere(function ($query) use ($authId, $userId) {
+            $query->where('user_id', $userId)->where('friend_id', $authId)->where('status', 'accepted');
+        })->exists();
+
+        return response()->json([
+            'friendRequestSent' => $friendRequestSent,
+            'friendRequestReceived' => $friendRequestReceived,
+            'friends' => $friends,
+        ]);
+    }
+    
 
 
      public function checkFriendRequest($profileUserId)

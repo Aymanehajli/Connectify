@@ -37,10 +37,12 @@ Route::get('/friend-requests', [FriendRequestController::class, 'friendrequestli
 Route::post('/friend-request/send/{id}', [FriendRequestController::class, 'send'])->name('friend-request.send');
 Route::post('/friend-request/accept/{id}', [FriendRequestController::class, 'accept'])->name('friend-request.accept');
 Route::post('/friend-request/refuse/{id}', [FriendRequestController::class, 'refuse'])->name('friend-request.refuse');
+Route::get('/friend/check-friendship/{id}', [FriendRequestController::class, 'checkFriendship'])->name('check.friendship');
+
 
 //Route::post('/add-friend/{id}', [FriendRequestController::class, 'addFriend'])->name('add.friend');
 Route::post('/remove-request/{id}', [FriendRequestController::class, 'removeRequest'])->name('remove.request');
-Route::get('/check-friendship/{id}', [FriendRequestController::class, 'checkFriendship'])->name('check.friendship');
+
 
 Route::get('/check-friend-request/{profileUserId}', [FriendRequestController::class, 'checkFriendRequest'])
     ->name('check.friend.request');
