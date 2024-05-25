@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\Block;
 
 
 class User extends Authenticatable 
@@ -27,6 +28,7 @@ class User extends Authenticatable
         'password',
         'image',
         'role',
+        'blocked',
     ];
 
     /**
@@ -88,4 +90,29 @@ class User extends Authenticatable
     {
         return $this->hasMany(Friend::class, 'receiver_id');
     }
+
+//block funtion
+public function blockers()
+{
+    return $this->hasMany(Block::class, 'blocked_id');
+}
+
+public function isBlockedBy($user)
+{
+    $user1 = User::find($user->id);
+    return $user1->blockers()->where('blocker_id', $this->id)->exists();
+}
+
+
+
+public function blockedUsers()
+{
+    return $this->belongsToMany(User::class, 'user_blocks', 'blocked_id', 'blocker_id');
+}
+
+public function hasBlocked($user)
+{
+    $user1 = User::find($user->id);
+    return $this->blockedUsers()->where('blocker_id', $user1->id)->exists();
+}
 }

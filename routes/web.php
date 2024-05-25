@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BlockController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\FriendController;
 use App\Http\Controllers\FriendRequestController;
@@ -81,6 +82,12 @@ Route::get('logout', [LoginController::class, 'logout'])->name('logout');
 Route::resource('user',test::class);
 
 
+Route::middleware(['auth', 'checkBlocked'])->group(function () {
+    Route::get('/profile/{user}', [test::class, 'show'])->name('profile.show');
+    // Other routes
+});
+
+
 //partie publicatioons
 Route::resource('publication',PublicationController::class);
 Route::get('/publications/{id}/likes', [PublicationController::class, 'likes'])->name('publications.likes');
@@ -104,3 +111,16 @@ Route::post('/settings/image', [SettingsController::class, 'updateProfileimage']
 
 
 Route::get('/friends', [FriendController::class, 'index'])->name('friends.index');
+
+
+
+
+
+
+
+//block user
+Route::post('/block/{id}', [BlockController::class, 'block'])->name('block');
+Route::post('/unblock/{id}', [BlockController::class, 'unblock'])->name('unblock');
+Route::get('/blocked', function () {
+    return view('blocked');
+})->name('blocked');

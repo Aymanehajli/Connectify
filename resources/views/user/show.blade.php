@@ -21,6 +21,19 @@
                         <input type="hidden" name="body" value="Hello, I want to connect with you!"> <!-- Sample message body -->
                         <button type="button" id="sendMessageBtn" data-profile-id="{{ $user->id }}">Message</button>
                     </form>
+                    @if (!$user->isBlockedBy(auth()->user()) )
+    <form action="{{ route('block', $user->id) }}" method="POST">
+        @csrf
+        <button type="submit" class="btn btn-danger">Block</button>
+    </form>
+
+@elseif ($auth1->hasBlocked($user))
+    <form action="{{ route('unblock', $user->id) }}" method="POST">
+        @csrf
+        <button type="submit" class="btn btn-primary">Unblock</button>
+    </form>
+@endif
+                
                 </div>
             </div>
         </div>

@@ -5,18 +5,18 @@ namespace App\Http\Controllers;
 use App\Http\Requests\UserRequest;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
-
+use App\Models\Block;
 
 use App\Models\User;
 use Illuminate\Http\Request;
 
 class test extends Controller
 {
-    //public function __construct()
-    //{
-      //  $this->middleware('auth');
+    public function __construct()
+    {
+        $this->middleware('auth');
         
-    //}
+    } 
     
 
     //show all users
@@ -31,15 +31,23 @@ class test extends Controller
     //show by id
     public function show(User $user)
     {
+
         
-       // $id=(int)$request->id;
-       // $user =User::find($id);
-       // if($user ===NULL)
-       // {
-       //     return abort(404);
-       // }
+        $Auser = auth()->user();
         
-        return view('user.show',compact('user'));
+        $user1 = User::find($user->id);
+        $auth1 = User::find($Auser->id);
+
+
+
+        if ($auth1->isBlockedBy($user1) || $user1->hasBlocked($auth1)) {
+           
+           
+            return redirect('/blocked');
+
+        }
+
+        return view('user.show', compact('user','auth1'));
     }
 
      //create formulaire
