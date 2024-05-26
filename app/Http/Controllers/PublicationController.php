@@ -76,7 +76,14 @@ public function dislike(Request $request, $id)
         //latest bach akhir haja hiya tban lwla
         
        
-      $publications= Publication::latest()->get();
+        $publications = Publication::where('user_id', auth()->id())
+        ->orWhere('shared_by', auth()->id())
+        ->orWhereDoesntHave('user', function ($query) {
+            $query->where('id', auth()->id());
+        })
+        ->orderBy('created_at', 'desc')
+        ->get();
+    
       $user = Auth::user();
       
    
@@ -153,5 +160,29 @@ public function dislike(Request $request, $id)
         //
         $publication->delete(); 
         return to_route('publication.index')->with('success','Votre compte est bien crée') ;
+    }
+
+
+    public function share($id)
+    {
+        $originalPublication = Publication::findOrFail($id);
+
+        $sharedPublication = Publication::create([
+            'user_id' => auth()->id(),
+            'shared_by' => $originalPublication->user_id,
+            'titre' => $originalPublication->titre,
+            'body' => $originalPublication->body,
+            'image' => $originalPublication->image,
+            'video' => $originalPublication->video,
+        ]);
+
+        Notification::create([
+            "type" => "share post",
+            "user_id" => $originalPublication->user_id,
+            "message" => auth()->user()->name . " shared your post",
+            "url" => "#",
+        ]);
+
+        return redirect()->back()->with('success', 'Publication partagée avec succès.');
     }
 }

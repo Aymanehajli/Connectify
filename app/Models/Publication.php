@@ -18,6 +18,7 @@ class Publication extends Model
         'video',
         'likes',
         'comments',
+        'shared_by',
         
     ];
     public function isLikedByUser($userId)
@@ -34,4 +35,10 @@ class Publication extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function sharedByUser()
+    {
+        return $this->belongsTo(User::class, 'shared_by');
+    }
+    
 }

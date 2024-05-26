@@ -95,7 +95,7 @@ Route::get('/publications/{id}/likes', [PublicationController::class, 'likes'])-
 Route::post('/publications/like/{id}', [PublicationController::class, 'like'])->name('publications.like');
 Route::post('/publications/dislike/{id}', [PublicationController::class, 'dislike'])->name('publications.dislike');
 Route::post('/publications/toggle-like/{id}', [PublicationController::class, 'toggleLike'])->name('publications.toggle-like');
-
+Route::post('/publication/share/{id}', [PublicationController::class, 'share'])->name('publication.share');
 
 
 

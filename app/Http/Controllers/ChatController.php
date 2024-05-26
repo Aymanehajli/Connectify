@@ -6,6 +6,7 @@ use App\Models\ChMessage;
 use App\Models\Notification;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use SebastianBergmann\Diff\Chunk;
@@ -54,12 +55,12 @@ public function fetchMessages(Request $request)
         $conversationId = $request->input('conversationId');
         $lastTimestamp = $request->input('lastTimestamp');
 
-        $query = Message::where(function($query) use ($conversationId) {
-            $query->where('from_user_id', Auth::id())
-                  ->where('to_user_id', $conversationId);
+        $query = ChMessage::where(function($query) use ($conversationId) {
+            $query->where('from_id', Auth::id())
+                  ->where('to_id', $conversationId);
         })->orWhere(function($query) use ($conversationId) {
-            $query->where('from_user_id', $conversationId)
-                  ->where('to_user_id', Auth::id());
+            $query->where('from_id', $conversationId)
+                  ->where('to_id', Auth::id());
         });
 
         if ($lastTimestamp) {

@@ -111,7 +111,14 @@
             <source src="{{ asset('storage/' . $publication->video) }}" type="video/mp4">
             Your browser does not support the video tag.
         </video>
-    @endif </div>
+    @endif 
+    
+ 
+            </div>
+
+            @if ($publication->shared_by)
+                <p class="text-muted">Shared from {{ $publication->sharedByUser->name }}</p>
+            @endif
 
                 <hr>
 
@@ -129,8 +136,10 @@
                     <button class="btn btn-info mx-2" data-bs-toggle="modal" data-bs-target="#commentsModal">{{ $publication->comments }} Comments</button>
 
                     <!-- Share button -->
-                    <button class="btn btn-success mx-2">Share</button>
-                </div>
+                    <form action="{{ route('publication.share', $publication->id) }}" method="POST" class="d-inline">
+        @csrf
+        <button type="submit" class="btn btn-success mx-2">Share</button>
+    </form>                </div>
             </div>
         </div>
     </div>

@@ -151,12 +151,12 @@
                         @endguest
                         
                 </ul>
-                
+                @auth
                 <form class="form-inline my-2 my-lg-0 search-form" id="friendSearchForm" action="{{ route('friends.search') }}" method="GET">
                     <input class="form-control mr-sm-2" type="text" name="search" id="searchInput" placeholder=" Search" >
                     <button class="btn btn-outline-success my-2 my-sm-0 btn-search" type="submit" id="searchButton">Search</button>
                 </form>
-                
+                @endauth
   
                 @auth
                 <ul class="navbar-nav ml-auto">
