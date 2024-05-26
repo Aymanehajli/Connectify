@@ -185,11 +185,9 @@
 </body>
 </html>
 
-
-
-<div id="searchResults"  >
-
-</div>
+<div class="container mt-3">
+        <div id="searchResults"></div>
+    </div>
 
 <style>
     .profilesearch-img {
@@ -200,19 +198,32 @@
         margin-right: 10px; /* Optional margin between image and text */
     }
 
-    ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        position: relative;
-        padding-right: 0;
-    }
+    .ul-searcheresult {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
 
-    ul li {
-        margin-bottom: 20px; /* Optional spacing between list items */
-    }
+        .ul-searcheresult li {
+            margin-bottom: 20px;
+        }
+
+        .search-result-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            background-color: #f8f9fa;
+            transition: background-color 0.3s;
+        }
+
+        .search-result-item:hover {
+            background-color: #e9ecef;
+        }
+    </style>
 </style>
-
 
 
 
@@ -242,26 +253,28 @@
             searchResultsContainer.innerHTML = '';
             if (friends.length > 0) {
                 const ul = document.createElement('ul');
+                ul.classList.add('ul-searcheresult');
                 
                 friends.forEach(friend => {
                     const li = document.createElement('li');
+                    li.classList.add('search-result-item');
+                    
                     const link = document.createElement('a');
-                    const img = document.createElement('img');
-
                     link.href = `{{ route('user.show', 'user_id') }}`.replace('user_id', friend.id);
-                    ul.classList.add('ul-searcheresult');
                     link.textContent = friend.name;
 
-                    img.src = `{{ asset('storage/') }}/${friend.image}`; // Assuming 'image' is the column name for the profile image path in your database
+                    const img = document.createElement('img');
+                    img.src = `{{ asset('storage/') }}/${friend.image}`;
                     img.alt = friend.name;
-                    img.classList.add('profilesearch-img'); // Apply the CSS class for rounded images
-                    link.appendChild(img);
+                    img.classList.add('profilesearch-img');
+                    
+                    li.appendChild(img);
                     li.appendChild(link);
                     ul.appendChild(li);
                 });
                 searchResultsContainer.appendChild(ul);
             } else {
-              const noResults = document.createElement('div');
+                const noResults = document.createElement('div');
                 noResults.classList.add('list-group-item');
                 noResults.textContent = 'No friends found.';
                 searchResultsContainer.appendChild(noResults);
@@ -316,55 +329,3 @@
 
 
 
-
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const messageContainer = document.getElementById('messageContainer');
-
-        messageContainer.addEventListener('click', function (event) {
-            if (event.target.classList.contains('sendMessageBtn')) {
-                const form = event.target.closest('.send-message-form');
-                const formData = new FormData(form);
-                const profileId = form.dataset.profileId;
-                formData.append('to_id', profileId);
-
-                fetch("{{ route('chat.send') }}", {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-CSRF-Token': '{{ csrf_token() }}',
-                    },
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Message sent successfully!');
-                        fetchMessages(); // Fetch and update messages after sending message
-                    } else {
-                        alert('Error sending message. Please try again.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error sending message:', error);
-                    alert('Error sending message. Please try again.');
-                });
-            }
-        });
-        
-
-        function fetchMessages() {
-            fetch("{{ route('chat.index') }}")
-            .then(response => response.text())
-            .then(html => {
-                messageContainer.innerHTML = html;
-            })
-            .catch(error => {
-                console.error('Error fetching messages:', error);
-            });
-        }
-
-        // Automatically fetch messages every 5 seconds
-        setInterval(fetchMessages, 300000);
-    });
-</script>
