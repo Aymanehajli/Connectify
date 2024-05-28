@@ -27,6 +27,8 @@ class ChatController extends Controller
     $users = User::where('id', '<>', auth()->id())->get();
 
     return view('chat.inbox', compact('messages', 'users')); }
+
+    
     public function sendMessage(Request $request)
     {
         // Validate request

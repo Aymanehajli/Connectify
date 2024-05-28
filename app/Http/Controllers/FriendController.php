@@ -24,7 +24,7 @@ class FriendController extends Controller
                                         ->get();
        
 
-        return view('friends.index', compact('friends','friendRequests'));
+        return view('friends.index', compact('friends','friendRequests','user'));
     }
     
     private function getFriends($userId)

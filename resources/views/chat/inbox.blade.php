@@ -4,6 +4,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat Interface</title>
@@ -155,6 +156,7 @@
     </style>
 </head>
 <body>
+    
     <div class="container">
         <div class="sidebar">
             <input type="text" class="search-input" placeholder="Search for users..." oninput="searchUsers(this.value)">
@@ -170,6 +172,7 @@
                         $conversationImage = $currentUser->image;
                         $lastMessage = $message->body;
                         $lastMessageDate = $message->created_at->format('M d, Y h:i A');
+                        
                     @endphp
                     @php
 // Get the authenticated user's ID and pass it to JavaScript
@@ -179,6 +182,8 @@ $authUserId = auth()->id();
 <script>
     const authUserId = '{{ $authUserId }}';
 </script>
+
+
 
                     @if (!isset($conversations[$conversationId]))
                         <div class="chat-card" onclick="openChat('{{ $conversationId }}', '{{ $conversationName }}', '{{ asset('storage/' . $conversationImage) }}')">

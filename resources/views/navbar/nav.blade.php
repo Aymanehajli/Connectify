@@ -25,7 +25,7 @@
     <style>
         /* Custom styles for Facebook navbar */
         .facebook-navbar {
-            background-color: #3b5998; /* Facebook blue color */
+            background-color: #615656; /* Facebook blue color */
         }
 
         .facebook-navbar .navbar-brand {
@@ -51,7 +51,7 @@
         }
 
         .facebook-navbar .nav-item.dropdown .dropdown-menu {
-            background-color: #3b5998; /* Facebook blue color */
+            background-color: #615656; /* Facebook blue color */
             border: none;
             border-radius: 0;
         }
