@@ -93,7 +93,7 @@ Route::middleware(['auth', 'checkBlocked'])->group(function () {
 Route::resource('publication',PublicationController::class);
 Route::get('/publications/{id}/likes', [PublicationController::class, 'likes'])->name('publications.likes');
 Route::post('/publications/like/{id}', [PublicationController::class, 'like'])->name('publications.like');
-Route::post('/publications/dislike/{id}', [PublicationController::class, 'dislike'])->name('publications.dislike');
+Route::put('/publications/dislike/{id}', [PublicationController::class, 'dislike'])->name('publications.dislike');
 Route::post('/publications/toggle-like/{id}', [PublicationController::class, 'toggleLike'])->name('publications.toggle-like');
 Route::post('/publication/share/{id}', [PublicationController::class, 'share'])->name('publication.share');
 Route::get('/publications/comments/{id}', [PublicationController::class, 'comments']);

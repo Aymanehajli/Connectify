@@ -45,15 +45,14 @@ class PublicationController extends Controller
 
 public function dislike(Request $request, $id)
 {
-    DB::beginTransaction();
-    try {
+   
         $like = Like::where(["publication_id" => $id, "user_id" => auth()->id()])->first();
-        if ($like) {
+        
             $like->delete();
             $post = Publication::findOrFail($id);
             $post->likes -= 1;
             $post->save();
-            DB::commit();
+            
             Notification::create([
                 "type" => "remove like",
                 "user_id" => $post->user_id,
@@ -61,14 +60,7 @@ public function dislike(Request $request, $id)
                 "url" => "#",
             ]);
             return response()->json(['success' => true, 'likes' => $post->likes, 'liked' => false]);
-        } else {
-            // Handle case where like record is not found
-            return response()->json(['success' => false, 'message' => 'You have not liked this publication.'], 400);
-        }
-    } catch (\Throwable $th) {
-        DB::rollBack();
-        return response()->json(['success' => false, 'message' => $th->getMessage()], 500);
-    }
+       
 }
 
      
