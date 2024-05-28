@@ -165,7 +165,7 @@ public function dislike(Request $request, $id)
             }
     
             // Fetch the comments for the publication
-            $comments = $publication->comments()->with('user')->get();
+            $comments = $publication->comments()->with('user')->paginate(5);
             
             if ($comments->isEmpty()) {
                 throw new \Exception("No comments yet !!");
@@ -186,7 +186,8 @@ public function dislike(Request $request, $id)
 
             return response()->json([
                 'success' => true,
-                'comments' => $mappedComments
+                'comments' => $mappedComments,
+                'next_page_url' => $comments->nextPageUrl() // Provide the URL for the next page of comments
             ]);
         } catch (\Exception $e) {
             Log::error('Error in fetching comments:', ['error' => $e->getMessage()]);

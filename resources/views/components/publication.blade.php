@@ -167,20 +167,13 @@
                 <div class="comments-section">
                     <h5>Comments</h5>
                     <div id="commentsList-{{ $publication->id }}">
-                        @if($publication->comments=0)
-                        @foreach ($publication->comments as $comment)
-                            <div class="comment">
-                                <div class="user-profile">
-                                    <img src="{{ asset('storage/' . $comment->user->image) }}" alt="User Image">
-                                    <div class="comment-body">
-                                        <h6>{{ $comment->user->name }}</h6>
-                                        <p>{{ $comment->comment }}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
-                        @endif
-                    </div>
+        <!-- Comments will be loaded here -->
+    </div>
+
+    <div id="loadMoreComments-{{ $publication->id }}" class="text-center mt-3" style="display: none;">
+        <button class="btn btn-secondary load-more-comments-btn" data-id="{{ $publication->id }}">Load More Comments</button>
+    </div>
+
 
                     <div class="add-comment">
     <input type="text" class="form-control comment-input" data-id="{{ $publication->id }}" id="comment-input-{{ $publication->id }}" placeholder="Add a comment...">
@@ -200,6 +193,7 @@
         $(document).off('click', '.like-btn');
     $(document).off('click', '.comments-btn');
     $(document).off('click', '.add-comment-btn');
+    $(document).off('click', '.load-more-comments-btn');
    
     $(document).on('click', '.like-btn', function() {
         var button = $(this);
@@ -232,6 +226,7 @@ $(document).on('click', '.comments-btn', function() {
         var button = $(this);
         var postId = button.data('id');
         var commentsList = $('#commentsList-' + postId);
+        var loadMoreComments = $('#loadMoreComments-' + postId);
         commentsList.html('Loading comments...');
 
         $.ajax({
@@ -243,12 +238,51 @@ $(document).on('click', '.comments-btn', function() {
                     response.comments.forEach(function(comment) {
                         commentsList.append('<div class="comment"><div class="user-profile"><img src="' + comment.user_image + '" alt="User Image"><div class="comment-body"><h6>' + comment.user_name + '</h6><p>' + comment.comment + '</p></div></div></div>');
                     });
+                    if (response.next_page_url) {
+                        loadMoreComments.show().data('next-page-url', response.next_page_url);
+                    } else {
+                        loadMoreComments.hide();
+                    }
                 } else {
                     commentsList.html('<p>An error occurred: ' + response.message + '</p>');
                 }
             },
             error: function(xhr) {
                 commentsList.html('<p>An error occurred: ' + xhr.responseText + '</p>');
+            }
+        });
+    });
+
+    $(document).on('click', '.load-more-comments-btn', function() {
+        var button = $(this);
+        var postId = button.data('id');
+        var commentsList = $('#commentsList-' + postId);
+        var nextPageUrl = button.data('next-page-url');
+
+        if (!nextPageUrl) {
+            return;
+        }
+
+
+        $.ajax({
+            url: nextPageUrl,
+            type: 'GET',
+            success: function(response) {
+                if (response.success) {
+                    response.comments.forEach(function(comment) {
+                        commentsList.append('<div class="comment"><div class="user-profile"><img src="' + comment.user_image + '" alt="User Image"><div class="comment-body"><h6>' + comment.user_name + '</h6><p>' + comment.comment + '</p></div></div></div>');
+                    });
+                    if (response.next_page_url) {
+                        button.data('next-page-url', response.next_page_url);
+                    } else {
+                        button.hide();
+                    }
+                } else {
+                    alert('An error occurred: ' + response.message);
+                }
+            },
+            error: function(xhr) {
+                alert('An error occurred: ' + xhr.responseText);
             }
         });
     });
