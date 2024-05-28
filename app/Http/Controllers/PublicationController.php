@@ -10,6 +10,7 @@ use App\Models\Publication;
 use Illuminate\Auth\Access\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class PublicationController extends Controller
 {
@@ -156,17 +157,45 @@ public function dislike(Request $request, $id)
     }
     public function comments($id)
     {
-        $publication = Publication::with('comments.user')->findOrFail($id);
-        $comments = $publication->comments->map(function ($comment) {
-            return [
-                'user_image' => asset('storage/' . $comment->user->image),
-                'user_name' => $comment->user->name,
-                'comment' => $comment->body
-            ];
-        });
+        try {
+            // Fetch the publication
+            $publication = Publication::findOrFail($id);
+            if (!$publication) {
+                throw new \Exception("Publication not found");
+            }
     
-        return response()->json(['success' => true, 'comments' => $comments]);
-    }
+            // Fetch the comments for the publication
+            $comments = $publication->comments()->with('user')->get();
+            
+            if ($comments->isEmpty()) {
+                throw new \Exception("No comments yet !!");
+            }
+    
+            
+            // Map the comments to include necessary user information
+            $mappedComments = $comments->map(function ($comment) {
+                return [
+                    'user_image' => asset('storage/' . $comment->user->image),
+                    'user_name' => $comment->user->name,
+                    'comment' => $comment->comment
+                ];
+            });
+    
+            Log::info('Comments fetched:', $mappedComments->toArray());
+            
+
+            return response()->json([
+                'success' => true,
+                'comments' => $mappedComments
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error in fetching comments:', ['error' => $e->getMessage()]);
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]);
+        }
+    } 
     
     public function addComment(Request $request, $id)
     {

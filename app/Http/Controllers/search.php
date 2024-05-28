@@ -23,7 +23,7 @@ class search extends Controller
 
     public function search(Request $request)
     {
-        dd($request);
+        
         $searchTerm = $request->input('search');
 
         // Perform a "like" query to search for users
