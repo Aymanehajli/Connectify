@@ -36,6 +36,11 @@ class Publication extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
     public function sharedByUser()
     {
         return $this->belongsTo(User::class, 'shared_by');

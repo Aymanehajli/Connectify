@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\PublicationRequest;
+use App\Models\Comment;
 use App\Models\Like;
 use App\Models\Notification;
 use App\Models\Publication;
@@ -161,6 +162,41 @@ public function dislike(Request $request, $id)
         $publication->delete(); 
         return to_route('publication.index')->with('success','Votre compte est bien crée') ;
     }
+    public function comments($id)
+    {
+        $publication = Publication::with('comments.user')->findOrFail($id);
+        $comments = $publication->comments->map(function ($comment) {
+            return [
+                'user_image' => asset('storage/' . $comment->user->image),
+                'user_name' => $comment->user->name,
+                'comment' => $comment->body
+            ];
+        });
+    
+        return response()->json(['success' => true, 'comments' => $comments]);
+    }
+    
+    public function addComment(Request $request, $id)
+    {
+        $publication = Publication::findOrFail($id);
+    
+        $comment = new Comment();
+        $comment->user_id = Auth::id();
+        $comment->publication_id = $id;
+        $comment->comment = $request->comment;
+        $comment->save();
+    
+        return response()->json([
+            'success' => true,
+            'comment' => [
+                'user_image' => asset('storage/' . Auth::user()->image),
+                'user_name' => Auth::user()->name,
+                'comment' => $comment->comment
+            ]
+        ]);
+    }
+
+
 
 
     public function share($id)
