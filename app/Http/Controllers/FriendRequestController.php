@@ -73,8 +73,6 @@ class FriendRequestController extends Controller
         }
         
 
-        DB::beginTransaction();
-        try {
 
             $user = User::findOrFail($id);
             $friendRequest->update(['status' => 'accepted']);
@@ -87,11 +85,6 @@ class FriendRequestController extends Controller
                 "url" => "#",
             ]);
 
-            DB::commit();
-        } catch (\Throwable $th) {
-            DB::rollBack();
-            throw $th;
-        }
         
         return response()->json(['success' => 'Friend request accepted.'], 200);
     }

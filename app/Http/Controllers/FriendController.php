@@ -53,12 +53,6 @@ class FriendController extends Controller
     public function accept($id)
     {
         $friendRequest = Friend::find($id);
-
-        if (!$friendRequest || $friendRequest->friend_id != Auth::id()) {
-            return response()->json(['error' => 'Invalid friend request.'], 403);
-        }
-        
-
         DB::beginTransaction();
         try {
 
@@ -80,6 +74,38 @@ class FriendController extends Controller
         }
         
         return response()->json(['success' => 'Friend request accepted.'], 200);
+    }
+
+    public function acceptfriend($id)
+    {
+        $user = User::where("id", $id)->first();
+
+        DB::beginTransaction();
+        try {
+            $friendRequest = Friend::where([
+                "user_id" => $id,
+                "friend_id" => auth()->id(),
+            ])->first();
+            if (!$friendRequest) {
+                abort(404, 'Friend request not found.');
+            }
+            $friendRequest->status = "accepted";
+            $friendRequest->save();
+
+            Notification::create([
+                "type" => "friend_accepted",
+                "user_id" => $user->id,
+                "message" => auth()->user()->name . " accepted your friend request",
+                "url" => "#",
+            ]);
+
+            
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
+        }
+        return response()->json(['message' => 'Friend request accepted successfully']);
     }
 
     public function refuse($id)

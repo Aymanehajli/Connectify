@@ -43,7 +43,7 @@
 <body>
     <div class="friend-request-container">
         <h2>Friend Requests</h2>
-        <div id="friend-request-list">
+          <div id="friend-request-list">
             
             @forelse ($friendRequests as $friendRequest)
                 <div class="friend-request-card" data-id="{{ $friendRequest->id }}">
@@ -56,7 +56,7 @@
                         <button class="btn btn-danger refuse-request" data-id="{{ $friendRequest->id }}">Refuse</button>
                     </div>
                 </div>
-            @empty
+             @empty
                 <p>No friend requests.</p>
             @endforelse
         </div>
@@ -66,7 +66,8 @@
     <script>
         $(document).ready(function() {
             // Accept friend request
-            $('.accept-request').on('click', function() {
+            $(document).off('click', '.accept-request');
+            $(document).on('click', '.accept-request', function() {
                 var button = $(this);
                 var requestId = button.data('id');
 

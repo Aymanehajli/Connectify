@@ -97,30 +97,36 @@
                         <p>{{ $friend->email }}</p>
                     </div>
                 </div>
-            @empty
+               @empty
                 <p>You have no friends yet.</p>
             @endforelse
         </div>
     </div>
+   
 
     <script>
         $(document).ready(function() {
+            console.log("Document is ready");
+
             // Accept friend request
             $('.accept-request').on('click', function() {
                 var button = $(this);
                 var requestId = button.data('id');
+                console.log("Accept button clicked, request ID:", requestId);
 
                 $.ajax({
-                    url: '/friend-request/accept/' + requestId,
+                    url: '/friend-request/acceptf/' + requestId,
                     type: 'POST',
                     data: {
                         _token: '{{ csrf_token() }}'
                     },
                     success: function(response) {
+                        console.log("Request succeeded:", response);
                         button.closest('.friend-request-card').remove();
                         alert(response.success);
                     },
                     error: function(xhr) {
+                        console.log("Request failed:", xhr);
                         alert('An error occurred: ' + xhr.responseJSON.error);
                     }
                 });
@@ -130,18 +136,21 @@
             $('.refuse-request').on('click', function() {
                 var button = $(this);
                 var requestId = button.data('id');
+                console.log("Refuse button clicked, request ID:", requestId);
 
                 $.ajax({
-                    url: '/friend-request/refuse/' + requestId,
+                    url: '/friend-request/refusef/' + requestId,
                     type: 'POST',
                     data: {
                         _token: '{{ csrf_token() }}'
                     },
                     success: function(response) {
+                        console.log("Request succeeded:", response);
                         button.closest('.friend-request-card').remove();
                         alert(response.success);
                     },
                     error: function(xhr) {
+                        console.log("Request failed:", xhr);
                         alert('An error occurred: ' + xhr.responseJSON.error);
                     }
                 });
