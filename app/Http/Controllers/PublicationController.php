@@ -222,25 +222,30 @@ public function dislike(Request $request, $id)
 
 
     public function share($id)
-    {
-        $originalPublication = Publication::findOrFail($id);
+{
+    $originalPublication = Publication::findOrFail($id);
 
-        $sharedPublication = Publication::create([
-            'user_id' => auth()->id(),
-            'shared_by' => $originalPublication->user_id,
-            'titre' => $originalPublication->titre,
-            'body' => $originalPublication->body,
-            'image' => $originalPublication->image,
-            'video' => $originalPublication->video,
-        ]);
+    $sharedPublication = Publication::create([
+        'user_id' => auth()->id(),
+        'shared_by' => $originalPublication->user_id,
+        'titre' => $originalPublication->titre,
+        'body' => $originalPublication->body,
+        'image' => $originalPublication->image,
+        'video' => $originalPublication->video,
+    ]);
 
-        Notification::create([
-            "type" => "share post",
-            "user_id" => $originalPublication->user_id,
-            "message" => auth()->user()->name . " shared your post",
-            "url" => "#",
-        ]);
+    Notification::create([
+        "type" => "share post",
+        "user_id" => $originalPublication->user_id,
+        "message" => auth()->user()->name . " shared your post",
+        "url" => "#",
+    ]);
 
-        return redirect()->back()->with('success', 'Publication partagée avec succès.');
-    }
+    // Return JSON response for AJAX request
+    return response()->json([
+        'success' => true,
+        'message' => 'Publication partagée avec succès.',
+    ]);
+}
+
 }

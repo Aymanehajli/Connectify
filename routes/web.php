@@ -40,6 +40,9 @@ Route::post('/friend-request/send/{id}', [FriendRequestController::class, 'send'
 Route::post('/friend-request/accept/{id}', [FriendRequestController::class, 'accept'])->name('friend-request.accept');
 Route::post('/friend-request/refuse/{id}', [FriendRequestController::class, 'refuse'])->name('friend-request.refuse');
 Route::get('/friend/check-friendship/{id}', [FriendRequestController::class, 'checkFriendship'])->name('check.friendship');
+Route::post('/friend-request/acceptf/{id}', [FriendController::class, 'accept'])->name('friend-request.acceptf');
+Route::post('/friend-request/refusef/{id}', [FriendController::class, 'refuse'])->name('friend-request.refusef');
+
 
 
 //Route::post('/add-friend/{id}', [FriendRequestController::class, 'addFriend'])->name('add.friend');
@@ -113,7 +116,6 @@ Route::post('/settings/image', [SettingsController::class, 'updateProfileimage']
 
 
 Route::get('/friends', [FriendController::class, 'index'])->name('friends.index');
-
 
 
 

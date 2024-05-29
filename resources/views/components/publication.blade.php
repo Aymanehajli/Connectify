@@ -157,28 +157,24 @@
                     <button class="btn btn-info mx-2 comments-btn" data-id="{{ $publication->id }}"> Comments</button>
 
                     <!-- Share button -->
-                    <form action="{{ route('publication.share', $publication->id) }}" method="POST" class="d-inline">
-                        @csrf
-                        <button type="submit" class="btn btn-success mx-2">Share</button>
-                    </form>
+                    <button type="button" class="btn btn-success mx-2 share-btn" data-id="{{ $publication->id }}">Share</button>
                 </div>
 
                 <!-- Comments Section -->
                 <div class="comments-section">
                     <h5>Comments</h5>
                     <div id="commentsList-{{ $publication->id }}">
-        <!-- Comments will be loaded here -->
-    </div>
+                        <!-- Comments will be loaded here -->
+                    </div>
 
-    <div id="loadMoreComments-{{ $publication->id }}" class="text-center mt-3" style="display: none;">
-        <button class="btn btn-secondary load-more-comments-btn" data-id="{{ $publication->id }}">Load More Comments</button>
-    </div>
-
+                    <div id="loadMoreComments-{{ $publication->id }}" class="text-center mt-3" style="display: none;">
+                        <button class="btn btn-secondary load-more-comments-btn" data-id="{{ $publication->id }}">Load More Comments</button>
+                    </div>
 
                     <div class="add-comment">
-    <input type="text" class="form-control comment-input" data-id="{{ $publication->id }}" id="comment-input-{{ $publication->id }}" placeholder="Add a comment...">
-    <button class="btn btn-primary add-comment-btn" data-id="{{ $publication->id }}" data-input-id="comment-input-{{ $publication->id }}">Comment</button>
-</div>
+                        <input type="text" class="form-control comment-input" data-id="{{ $publication->id }}" id="comment-input-{{ $publication->id }}" placeholder="Add a comment...">
+                        <button class="btn btn-primary add-comment-btn" data-id="{{ $publication->id }}" data-input-id="comment-input-{{ $publication->id }}">Comment</button>
+                    </div>
 
                 </div>
             </div>
@@ -189,29 +185,152 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-    $(document).ready(function() {
-        $(document).off('click', '.like-btn');
-    $(document).off('click', '.comments-btn');
-    $(document).off('click', '.add-comment-btn');
-    $(document).off('click', '.load-more-comments-btn');
-   
-    $(document).on('click', '.like-btn', function() {
+        $(document).ready(function() {
+            $(document).off('click', '.like-btn');
+            $(document).off('click', '.comments-btn');
+            $(document).off('click', '.add-comment-btn');
+            $(document).off('click', '.load-more-comments-btn');
+            $(document).off('click', '.share-btn');
+
+            $(document).on('click', '.like-btn', function() {
+                var button = $(this);
+                var postId = button.data('id');
+                var action = button.data('action');
+                var url = action === 'like' ? '/publications/like/' + postId : '/publications/dislike/' + postId;
+
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        _method: action === 'like' ? 'POST' : 'PUT'
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            button.data('action', action === 'like' ? 'dislike' : 'like');
+                            button.text(response.likes + (action === 'like' ? ' Dislike' : ' Like'));
+                        } else {
+                            alert('An error occurred: ' + response.message);
+                        }
+                    },
+                    error: function(xhr) {
+                        alert('An error occurred: ' + xhr.responseText);
+                    }
+                });
+            });
+
+            // Event delegation for comments button
+            $(document).on('click', '.comments-btn', function() {
+                var button = $(this);
+                var postId = button.data('id');
+                var commentsList = $('#commentsList-' + postId);
+                var loadMoreComments = $('#loadMoreComments-' + postId);
+                commentsList.html('Loading comments...');
+
+                $.ajax({
+                    url: '/publications/comments/' + postId,
+                    type: 'GET',
+                    success: function(response) {
+                        if (response.success) {
+                            commentsList.html('');
+                            response.comments.forEach(function(comment) {
+                                commentsList.append('<div class="comment"><div class="user-profile"><img src="' + comment.user_image + '" alt="User Image"><div class="comment-body"><h6>' + comment.user_name + '</h6><p>' + comment.comment + '</p></div></div></div>');
+                            });
+                            if (response.next_page_url) {
+                                loadMoreComments.show().data('next-page-url', response.next_page_url);
+                            } else {
+                                loadMoreComments.hide();
+                            }
+                        } else {
+                            commentsList.html('<p>An error occurred: ' + response.message + '</p>');
+                        }
+                    },
+                    error: function(xhr) {
+                        commentsList.html('<p>An error occurred: ' + xhr.responseText + '</p>');
+                    }
+                });
+            });
+
+            $(document).on('click', '.load-more-comments-btn', function() {
+                var button = $(this);
+                var postId = button.data('id');
+                var commentsList = $('#commentsList-' + postId);
+                var nextPageUrl = button.data('next-page-url');
+
+                if (!nextPageUrl) {
+                    return;
+                }
+
+                $.ajax({
+                    url: nextPageUrl,
+                    type: 'GET',
+                    success: function(response) {
+                        if (response.success) {
+                            response.comments.forEach(function(comment) {
+                                commentsList.append('<div class="comment"><div class="user-profile"><img src="' + comment.user_image + '" alt="User Image"><div class="comment-body"><h6>' + comment.user_name + '</h6><p>' + comment.comment + '</p></div></div></div>');
+                            });
+                            if (response.next_page_url) {
+                                button.data('next-page-url', response.next_page_url);
+                            } else {
+                                button.hide();
+                            }
+                        } else {
+                            alert('An error occurred: ' + response.message);
+                        }
+                    },
+                    error: function(xhr) {
+                        alert('An error occurred: ' + xhr.responseText);
+                    }
+                });
+            });
+
+            $(document).on('click', '.add-comment-btn', function() {
+                var button = $(this);
+                var postId = button.data('id');
+                var commentInput = $('.comment-input[data-id="' + postId + '"]');
+                var comment = commentInput.val();
+
+                if (comment === '') {
+                    alert('Comment cannot be empty.');
+                    return;
+                }
+
+                $.ajax({
+                    url: '/publications/comments/' + postId,
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        comment: comment
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            $('#commentsList-' + postId).append('<div class="comment"><div class="user-profile"><img src="' + response.comment.user_image + '" alt="User Image"><div class="comment-body"><h6>' + response.comment.user_name + '</h6><p>' + response.comment.comment + '</p></div></div></div>');
+                            commentInput.val('');
+                        } else {
+                            alert('An error occurred: ' + response.message);
+                        }
+                    },
+                    error: function(xhr) {
+                        alert('An error occurred: ' + xhr.responseText);
+                    }
+                });
+            });
+
+            
+    $(document).on('click', '.share-btn', function() {
         var button = $(this);
         var postId = button.data('id');
-        var action = button.data('action');
-        var url = action === 'like' ? '/publications/like/' + postId : '/publications/dislike/' + postId;
 
         $.ajax({
-            url: url,
+            url: '/publication/share/' + postId,
             type: 'POST',
             data: {
-                _token: '{{ csrf_token() }}',
-                _method: action === 'like' ? 'POST' : 'PUT'
+                _token: '{{ csrf_token() }}'
             },
             success: function(response) {
                 if (response.success) {
-                    button.data('action', action === 'like' ? 'dislike' : 'like');
-                    button.text(response.likes + (action === 'like' ? ' Dislike' : ' Like'));
+                    alert('Post shared successfully!');
+                    // Optionally update the UI or perform other actions
                 } else {
                     alert('An error occurred: ' + response.message);
                 }
@@ -221,103 +340,7 @@
             }
         });
     });
-// Event delegation for comments button
-$(document).on('click', '.comments-btn', function() {
-        var button = $(this);
-        var postId = button.data('id');
-        var commentsList = $('#commentsList-' + postId);
-        var loadMoreComments = $('#loadMoreComments-' + postId);
-        commentsList.html('Loading comments...');
-
-        $.ajax({
-            url: '/publications/comments/' + postId,
-            type: 'GET',
-            success: function(response) {
-                if (response.success) {
-                    commentsList.html('');
-                    response.comments.forEach(function(comment) {
-                        commentsList.append('<div class="comment"><div class="user-profile"><img src="' + comment.user_image + '" alt="User Image"><div class="comment-body"><h6>' + comment.user_name + '</h6><p>' + comment.comment + '</p></div></div></div>');
-                    });
-                    if (response.next_page_url) {
-                        loadMoreComments.show().data('next-page-url', response.next_page_url);
-                    } else {
-                        loadMoreComments.hide();
-                    }
-                } else {
-                    commentsList.html('<p>An error occurred: ' + response.message + '</p>');
-                }
-            },
-            error: function(xhr) {
-                commentsList.html('<p>An error occurred: ' + xhr.responseText + '</p>');
-            }
-        });
-    });
-
-    $(document).on('click', '.load-more-comments-btn', function() {
-        var button = $(this);
-        var postId = button.data('id');
-        var commentsList = $('#commentsList-' + postId);
-        var nextPageUrl = button.data('next-page-url');
-
-        if (!nextPageUrl) {
-            return;
-        }
-
-
-        $.ajax({
-            url: nextPageUrl,
-            type: 'GET',
-            success: function(response) {
-                if (response.success) {
-                    response.comments.forEach(function(comment) {
-                        commentsList.append('<div class="comment"><div class="user-profile"><img src="' + comment.user_image + '" alt="User Image"><div class="comment-body"><h6>' + comment.user_name + '</h6><p>' + comment.comment + '</p></div></div></div>');
-                    });
-                    if (response.next_page_url) {
-                        button.data('next-page-url', response.next_page_url);
-                    } else {
-                        button.hide();
-                    }
-                } else {
-                    alert('An error occurred: ' + response.message);
-                }
-            },
-            error: function(xhr) {
-                alert('An error occurred: ' + xhr.responseText);
-            }
-        });
-    });
-
-        $(document).on('click', '.add-comment-btn', function() {
-        var button = $(this);
-        var postId = button.data('id');
-        var commentInput = $('.comment-input[data-id="' + postId + '"]');
-        var comment = commentInput.val();
-
-        if (comment === '') {
-            alert('Comment cannot be empty.');
-            return;
-        }
-
-        $.ajax({
-            url: '/publications/comments/' + postId,
-            type: 'POST',
-            data: {
-                _token: '{{ csrf_token() }}',
-                comment: comment
-            },
-            success: function(response) {
-                if (response.success) {
-                    $('#commentsList-' + postId).append('<div class="comment"><div class="user-profile"><img src="' + response.comment.user_image + '" alt="User Image"><div class="comment-body"><h6>' + response.comment.user_name + '</h6><p>' + response.comment.comment + '</p></div></div></div>');
-                    commentInput.val('');
-                } else {
-                    alert('An error occurred: ' + response.message);
-                }
-            },
-            error: function(xhr) {
-                alert('An error occurred: ' + xhr.responseText);
-            }
-        });
-    });
-
-    });
-</script>
+});
+    </script>
+</body>
+</html>
