@@ -59,7 +59,6 @@ class FriendRequestController extends Controller
         return response()->json(['message' => 'Friend request sent to ' . $receiver->name]);
     }
 
-
     }
 
   

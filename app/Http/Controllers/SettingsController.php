@@ -30,7 +30,7 @@ class SettingsController extends Controller
         
     ]);
        
-        return back()->with('status', 'Profile picture updated successfully.');
+        return redirect()->route('settings.index')->with('status', 'Profile picture updated successfully.');
     }
 
 
@@ -52,7 +52,7 @@ class SettingsController extends Controller
         ]);
        
        
-        return back()->with('status', 'Account updated successfully.');
+        return redirect()->route('settings.index')->with('success', 'Account updated successfully.');
         
     }
 

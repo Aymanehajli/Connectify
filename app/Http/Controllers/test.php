@@ -34,20 +34,24 @@ class test extends Controller
 
         
         $Auser = auth()->user();
-        
         $user1 = User::find($user->id);
         $auth1 = User::find($Auser->id);
 
+        $friendSuggestions = User::where('id', '!=', auth()->id())
+        ->whereNotIn('id', function ($query) {
+            $query->select('friend_id')
+                  ->from('friends')
+                  ->where('user_id', auth()->id())
+                  ->where('status', 'accepted'); // Vous pouvez ajouter d'autres conditions si nécessaire
+        })
+        ->inRandomOrder()
+        ->take(5)
+        ->get();
 
 
-        if ($auth1->isBlockedBy($user1) || $user1->hasBlocked($auth1)) {
-           
-           
-            return redirect('/blocked');
+        $isBlocked = $auth1->isBlockedBy($user1) || $user1->hasBlocked($auth1);
 
-        }
-
-        return view('user.show', compact('user','auth1'));
+        return view('user.show', compact('user','auth1','isBlocked','friendSuggestions'));
     }
 
      //create formulaire
