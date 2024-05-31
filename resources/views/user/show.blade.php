@@ -122,7 +122,9 @@
     }
 
     function acceptFriend() {
-        axios.post("{{ route('friend-request.accept', $user->id) }}")
+        axios.post("{{ route('friend-request.accept', $user->id) }}", {
+            _token: '{{ csrf_token() }}'
+        })
             .then(function (response) {
                 alert(response.data.message);
                 checkFriendship();

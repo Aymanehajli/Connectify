@@ -65,21 +65,24 @@ class FriendRequestController extends Controller
     
     public function accept($id)
     {
-        $friendRequest = Friend::find($id);
+        $friendRequest = Friend::where('user_id', $id)
+                            ->where('friend_id', Auth::id())
+                            ->first();
 
-        if (!$friendRequest || $friendRequest->friend_id != Auth::id()) {
-            return response()->json(['error' => 'Invalid friend request.'], 403);
-        }
+
+                            if (!$friendRequest) {
+                                return response()->json(['error' => 'Invalid friend request.'], 403);
+                            }
         
 
 
-            $user = User::findOrFail($id);
+           
             $friendRequest->update(['status' => 'accepted']);
             $friendRequest->save();
 
             Notification::create([
                 "type" => "friend_accepted",
-                "user_id" => $user->id,
+                "user_id" => $friendRequest->user_id,
                 "message" => auth()->user()->name . " accepted your friend request",
                 "url" => "#",
             ]);
