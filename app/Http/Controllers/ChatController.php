@@ -51,6 +51,42 @@ class ChatController extends Controller
         ]);
         return response()->json(['success' => true]);
 }
+public function markAsRead(Request $request) {
+    $conversationId = $request->input('conversationId');
+    $authUserId = auth()->id();
+
+    ChMessage::where('from_id', $conversationId)
+           ->where('to_id', $authUserId)
+           ->where('seen', false)
+           ->update(['seen' => true]);
+
+    return response()->json(['success' => true]);
+}
+
+public function fetchUnseenMessages(Request $request) {
+    $conversationId = $request->input('conversationId');
+    $authUserId = auth()->id();
+
+    $messages = ChMessage::where('from_id', $conversationId)
+                         ->where('to_id', $authUserId)
+                         ->where('seen', false)
+                         ->orderBy('created_at', 'asc')
+                         ->get();
+
+    return response()->json([
+        'success' => true,
+        'messages' => $messages->map(function ($message) {
+            return [
+                'id' => $message->id,
+                'body' => $message->body,
+                'from_id' => $message->from_id,
+                'to_id' => $message->to_id,
+                'timestamp' => $message->created_at,
+            ];
+        }),
+    ]);
+}
+
 
 public function fetchMessages(Request $request)
     {

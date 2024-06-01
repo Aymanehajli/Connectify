@@ -22,7 +22,9 @@ Route::get('/', function () {
 //messages
 Route::get('/chat/fetchMessages', [ChatController::class, 'fetchMessages'])->name('chat.fetchMessages');
 Route::get('/chat/pollMessages', [ChatController::class, 'pollMessages'])->name('chat.pollMessages');
-    
+Route::post('/chat/markAsRead', [ChatController::class, 'markAsRead'])->name('chat.markAsRead');
+Route::post('/chat/fetchUnseenMessages', [ChatController::class, 'fetchUnseenMessages'])->name('chat.fetchUnseenMessages');
+
 
 
 

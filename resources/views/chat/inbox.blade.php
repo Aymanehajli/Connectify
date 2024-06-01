@@ -4,7 +4,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat Interface</title>
@@ -175,15 +174,8 @@
                         
                     @endphp
                     @php
-// Get the authenticated user's ID and pass it to JavaScript
-$authUserId = auth()->id();
-@endphp
-
-<script>
-    const authUserId = '{{ $authUserId }}';
-</script>
-
-
+                        $authUserId = auth()->id();
+                    @endphp
 
                     @if (!isset($conversations[$conversationId]))
                         <div class="chat-card" onclick="openChat('{{ $conversationId }}', '{{ $conversationName }}', '{{ asset('storage/' . $conversationImage) }}')">
@@ -283,41 +275,85 @@ $authUserId = auth()->id();
             });
         });
 
-        function fetchMessages(conversationId) {
-    fetch(`/chat/fetchMessages?conversationId=${conversationId}&lastTimestamp=${lastMessageTimestamp || ''}`)
-        .then(response => response.json())
-        .then(data => {
+        let displayedMessageIds = new Set();
+
+function pollUnseenMessages() {
+    if (currentConversationId) {
+        fetch("{{ route('chat.fetchUnseenMessages') }}", {
+            method: 'POST',
+            body: JSON.stringify({ conversationId: currentConversationId }),
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
+            }
+        }).then(response => response.json()).then(data => {
             if (data.success) {
                 var chatHistory = document.querySelector('.chat-history');
 
                 data.messages.forEach(message => {
-                    var messageContainer = document.createElement('div');
-                    messageContainer.classList.add('message-container');
-                    messageContainer.setAttribute('data-conversation', conversationId);
+                    // Check if the message has already been displayed
+                    if (!displayedMessageIds.has(message.id)) {
+                        var messageContainer = document.createElement('div');
+                        messageContainer.classList.add('message-container');
+                        messageContainer.setAttribute('data-conversation', currentConversationId);
 
-                    var messageContent = document.createElement('div');
-                    messageContent.classList.add('message-content');
-                    messageContent.textContent = message.body;
-
-                    // Determine message sender and add appropriate class
-                    if (message.from_id == authUserId) {
-                        messageContent.classList.add('my-message');
-                    } else {
+                        var messageContent = document.createElement('div');
+                        messageContent.classList.add('message-content');
                         messageContent.classList.add('other-message');
+                        messageContent.textContent = message.body;
+
+                        messageContainer.appendChild(messageContent);
+                        chatHistory.appendChild(messageContainer);
+
+                        // Add message ID to the set of displayed messages
+                        displayedMessageIds.add(message.id);
+
+                        lastMessageTimestamp = message.timestamp;
                     }
-
-                    messageContainer.appendChild(messageContent);
-                    chatHistory.appendChild(messageContainer);
-
-                    lastMessageTimestamp = message.timestamp;
                 });
             }
-        })
-        .catch(error => {
+        }).catch(error => {
             console.error('Error:', error);
         });
+    }
 }
 
+setInterval(pollUnseenMessages, 1000); // Poll every 5 seconds
+
+
+        function fetchMessages(conversationId) {
+            fetch(`/chat/fetchMessages?conversationId=${conversationId}&lastTimestamp=${lastMessageTimestamp || ''}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        var chatHistory = document.querySelector('.chat-history');
+
+                        data.messages.forEach(message => {
+                            var messageContainer = document.createElement('div');
+                            messageContainer.classList.add('message-container');
+                            messageContainer.setAttribute('data-conversation', conversationId);
+
+                            var messageContent = document.createElement('div');
+                            messageContent.classList.add('message-content');
+                            messageContent.textContent = message.body;
+
+                            if (message.from_id == authUserId) {
+                                messageContent.classList.add('my-message');
+                            } else {
+                                messageContent.classList.add('other-message');
+                            }
+
+                            messageContainer.appendChild(messageContent);
+                            chatHistory.appendChild(messageContainer);
+
+                            lastMessageTimestamp = message.timestamp;
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
 
         function searchUsers(query) {
             const userList = document.getElementById('user-list');
@@ -329,46 +365,82 @@ $authUserId = auth()->id();
             });
         }
 
-        // Polling for new messages
         function pollMessages() {
-    if (currentConversationId) {
-        fetch(`/chat/pollMessages?conversationId=${currentConversationId}&lastTimestamp=${lastMessageTimestamp || ''}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    var chatHistory = document.querySelector('.chat-history');
+            if (currentConversationId) {
+                fetch(`/chat/pollMessages?conversationId=${currentConversationId}&lastTimestamp=${lastMessageTimestamp || ''}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            var chatHistory = document.querySelector('.chat-history');
 
-                    data.messages.forEach(message => {
-                        var messageContainer = document.createElement('div');
-                        messageContainer.classList.add('message-container');
-                        messageContainer.setAttribute('data-conversation', currentConversationId);
+                            data.messages.forEach(message => {
+                                var messageContainer = document.createElement('div');
+                                messageContainer.classList.add('message-container');
+                                messageContainer.setAttribute('data-conversation', currentConversationId);
 
-                        var messageContent = document.createElement('div');
-                        messageContent.classList.add('message-content');
-                        messageContent.textContent = message.body;
+                                var messageContent = document.createElement('div');
+                                messageContent.classList.add('message-content');
+                                messageContent.textContent = message.body;
 
-                        // Determine message sender and add appropriate class
-                        if (message.from_id == authUserId) {
-                            messageContent.classList.add('my-message');
-                        } else {
-                            messageContent.classList.add('other-message');
+                                if (message.from_id == authUserId) {
+                                    messageContent.classList.add('my-message');
+                                } else {
+                                    messageContent.classList.add('other-message');
+                                }
+
+                                messageContainer.appendChild(messageContent);
+                                chatHistory.appendChild(messageContainer);
+
+                                lastMessageTimestamp = message.timestamp;
+                            });
                         }
-
-                        messageContainer.appendChild(messageContent);
-                        chatHistory.appendChild(messageContainer);
-
-                        lastMessageTimestamp = message.timestamp;
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
                     });
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-    }
-}
+            }
+        }
 
         setInterval(pollMessages, 5000); // Poll every 5 seconds
+        function openChat(conversationId, conversationName, conversationImage) {
+    document.querySelectorAll('.chat-header, .chat-footer').forEach(el => el.classList.remove('hidden'));
+    document.getElementById('chat-header-image').src = conversationImage;
+    document.getElementById('chat-header-name').textContent = conversationName;
+    document.getElementById('to_id').value = conversationId;
+    currentConversationId = conversationId;
+
+    document.querySelectorAll('.message-container').forEach(el => {
+        el.style.display = el.getAttribute('data-conversation') === conversationId ? 'block' : 'none';
+    });
+
+    // Clear the set of displayed message IDs when opening a new chat
+    displayedMessageIds.clear();
+
+    fetchMessages(conversationId);
+    markMessagesAsRead(conversationId);
+}
+
+
+function markMessagesAsRead(conversationId) {
+    fetch("{{ route('chat.markAsRead') }}", {
+        method: 'POST',
+        body: JSON.stringify({ conversationId: conversationId }),
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
+        }
+    }).then(response => response.json()).then(data => {
+        if (data.success) {
+            console.log('Messages marked as read');
+        } else {
+            console.error('Failed to mark messages as read');
+        }
+    }).catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+    
     </script>
 </body>
 </html>
-
