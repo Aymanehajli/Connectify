@@ -1,6 +1,4 @@
 @include('navbar.nav')
-<br><br>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -195,6 +193,7 @@
         </div>
 
         <div class="chat-window">
+            
             <div class="chat-header hidden">
                 <img src="https://via.placeholder.com/30" alt="User Image" id="chat-header-image">
                 <strong id="chat-header-name">Conversation Name</strong>
@@ -402,6 +401,7 @@ setInterval(pollUnseenMessages, 1000); // Poll every 5 seconds
         }
 
         setInterval(pollMessages, 5000); // Poll every 5 seconds
+    
         function openChat(conversationId, conversationName, conversationImage) {
     document.querySelectorAll('.chat-header, .chat-footer').forEach(el => el.classList.remove('hidden'));
     document.getElementById('chat-header-image').src = conversationImage;
@@ -413,13 +413,9 @@ setInterval(pollUnseenMessages, 1000); // Poll every 5 seconds
         el.style.display = el.getAttribute('data-conversation') === conversationId ? 'block' : 'none';
     });
 
-    // Clear the set of displayed message IDs when opening a new chat
-    displayedMessageIds.clear();
-
     fetchMessages(conversationId);
-    markMessagesAsRead(conversationId);
+    markMessagesAsRead(conversationId); // Mark messages as read when conversation is opened
 }
-
 
 function markMessagesAsRead(conversationId) {
     fetch("{{ route('chat.markAsRead') }}", {

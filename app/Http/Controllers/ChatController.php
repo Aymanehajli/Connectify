@@ -32,12 +32,22 @@ class ChatController extends Controller
     public function sendMessage(Request $request)
     {
         // Validate request
+        $request->validate([
+            'from_id' => 'required|integer',
+            'to_id' => 'required|integer',
+            'body' => 'nullable|string',
+            'attachment' => 'nullable|file|mimes:jpeg,png,jpg,gif,mp4,mov,avi,flv'
+        ]);
         
         
         $message = new ChMessage();
         $message->from_id = $request->input('from_id');
         $message->to_id = $request->input('to_id');
         $message->body = $request->input('body');
+        if ($request->hasFile('attachment')) {
+            $path = $request->file('attachment')->store('attachments', 'public');
+            $message->attachment = $path;
+        }
         $message->save();
 
 
@@ -51,6 +61,8 @@ class ChatController extends Controller
         ]);
         return response()->json(['success' => true]);
 }
+
+
 public function markAsRead(Request $request) {
     $conversationId = $request->input('conversationId');
     $authUserId = auth()->id();
