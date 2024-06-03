@@ -14,6 +14,7 @@ return [
     'english' => 'Anglais',
     'french' => 'Français',
     'spanish' => 'Espagnol',
+    'arabic' => 'Arabe',
     'save_changes' => 'Enregistrer les modifications',
     'old_password' => 'Ancien mot de passe',
     'new_password' => 'Nouveau mot de passe',

@@ -41,12 +41,13 @@ class SettingsController extends Controller
     public function switchLanguage(Request $request)
     {
         $language = $request->input('language');
-        $languages = ['en', 'fr', 'es']; // Add more languages as needed
+        $languages = ['en', 'fr', 'es','ar']; // Add more languages as needed
 
         if (in_array($language, $languages)) {
             Session::put('app_locale', $language);
             App::setLocale($language);
         }
+        
         $user = Auth::user();
         $currentLocale = App::getLocale();
 

@@ -5,7 +5,7 @@
 <!-- Replace the existing code in your Blade template with the updated code below -->
 
 <!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -166,6 +166,7 @@
                 <option value="en" {{ App::getLocale() == 'en' ? 'selected' : '' }}>{{ __('messages.english') }}</option>
                 <option value="fr" {{ App::getLocale() == 'fr' ? 'selected' : '' }}>{{ __('messages.french') }}</option>
                 <option value="es" {{ App::getLocale() == 'es' ? 'selected' : '' }}>{{ __('messages.spanish') }}</option>
+                <option value="ar" {{ App::getLocale() == 'ar' ? 'selected' : '' }}>{{ __('messages.arabic') }}</option>
                 <!-- Add more languages as needed -->
             </select>
         </div>

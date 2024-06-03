@@ -1,5 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+
+@php
+    $currentLocale = App::getLocale();
+@endphp
+
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -66,43 +71,44 @@
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 </head>
 <body>
+
     @include('navbar.nav')
     <div class="container">
-        <div class="sidebar">
-            <h2>Friend Requests</h2>
-            <div id="friend-request-list">
-                @forelse ($friendRequests as $friendRequest)
-                    <div class="friend-request-card" data-id="{{ $friendRequest->id }}">
-                        <div>
-                            <img src="{{ asset('storage/' . $friendRequest->sender->image) }}" alt="{{ $friendRequest->sender->name }}">
-                            <h5>{{ $friendRequest->sender->name }}</h5>
-                        </div>
-                        <div>
-                            <button class="btn btn-success accept-request" data-id="{{ $friendRequest->id }}">Accept</button>
-                            <button class="btn btn-danger refuse-request" data-id="{{ $friendRequest->id }}">Refuse</button>
-                        </div>
-                    </div>
-                @empty
-                    <p>No friend requests.</p>
-                @endforelse
-            </div>
-        </div>
-        <div class="main-content">
-            <h2>Your Friends (<span id="friend-count">{{ count($friends) }}</span>)</h2>
-            @forelse ($friends as $friend)
-                <div class="friend-card">
-                    <img src="{{ asset('storage/' . $friend->image) }}" alt="{{ $friend->name }}">
+    <div class="sidebar">
+        <h2>{{ __('messages.friend_requests') }}</h2>
+      <div id="friend-request-list">
+            @forelse ($friendRequests as $friendRequest)
+                <div class="friend-request-card" data-id="{{ $friendRequest->id }}">
                     <div>
-                        <h5>{{ $friend->name }}</h5>
-                        <p>{{ $friend->email }}</p>
+                        <img src="{{ asset('storage/' . $friendRequest->sender->image) }}" alt="{{ $friendRequest->sender->name }}">
+                        <h5>{{ $friendRequest->sender->name }}</h5>
+                    </div>
+                    <div>
+                        <button class="btn btn-success accept-request" data-id="{{ $friendRequest->id }}">{{ __('messages.accept') }}</button>
+                        <button class="btn btn-danger refuse-request" data-id="{{ $friendRequest->id }}">{{ __('messages.refuse') }}</button>
                     </div>
                 </div>
-               @empty
-                <p>You have no friends yet.</p>
+            @empty
+                <p>{{ __('messages.friend_requests_empty') }}</p>
             @endforelse
         </div>
     </div>
-   
+    <div class="main-content">
+        <h2>{{ __('messages.your_friends', ['count' => count($friends)]) }}</h2>
+        @forelse ($friends as $friend)
+            <div class="friend-card">
+                <img src="{{ asset('storage/' . $friend->image) }}" alt="{{ $friend->name }}">
+                <div>
+                    <h5>{{ $friend->name }}</h5>
+                    <p>{{ $friend->email }}</p>
+                </div>
+            </div>
+        @empty
+            <p>{{ __('messages.friend_count_empty') }}</p>
+        @endforelse
+    </div>
+</div>
+
 
     <script>
         $(document).ready(function() {
