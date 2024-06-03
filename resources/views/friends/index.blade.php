@@ -88,7 +88,7 @@
             </div>
         </div>
         <div class="main-content">
-            <h2>Your Friends</h2>
+            <h2>Your Friends (<span id="friend-count">{{ count($friends) }}</span>)</h2>
             @forelse ($friends as $friend)
                 <div class="friend-card">
                     <img src="{{ asset('storage/' . $friend->image) }}" alt="{{ $friend->name }}">

@@ -72,11 +72,12 @@
     <div class="settings-container">
         <aside class="settings-aside">
             <nav>
-                <ul class="settings-nav">
-                    <li><a href="#profile" class="settings-link">Profile Settings</a></li>
-                    <li><a href="#account" class="settings-link">Account Settings</a></li>
-                    <li><a href="#delete" class="settings-link">Delete Account</a></li>
-                </ul>
+            <ul class="settings-nav">
+          <li><a href="#profile" class="settings-link">Profile Settings</a></li>
+          <li><a href="#account" class="settings-link">Account Settings</a></li>
+          <li><a href="#delete" class="settings-link" >Delete Account</a></li>
+         
+        </ul>
             </nav>
         </aside>
         <main class="settings-main">
@@ -153,15 +154,37 @@
             
             <section id="delete">
                 <h2>Delete Account</h2>
-                <form action="{{route('user.destroy',$user->id)}}" method="post">
-                    @method('DELETE')
-                    @csrf
-                    <button type="submit" class="btn btn-danger">Delete</button>
+                    <button type="submit" class="btn btn-danger"  data-toggle="modal" data-target="#deleteConfirmationModal">Delete</button>
                 </form>
                 <hr>
             </section>
         </main>
     </div>
+
+
+    <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteConfirmationModalLabel">Confirm Delete Account</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to delete your account? This action cannot be undone.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          <form action="{{ route('user.destroy',$user->id) }}" method="post">
+            @method('DELETE')
+            @csrf
+            <button type="submit" class="btn btn-danger">Delete Account</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>

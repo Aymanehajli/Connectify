@@ -42,7 +42,7 @@
 </head>
 <body>
     <div class="friend-request-container">
-        <h2>Friend Requests</h2>
+        <h2>Friend Requests (<span id="friend-count">{{ count($friendRequests) }}</span>)</h2>
           <div id="friend-request-list">
             
             @forelse ($friendRequests as $friendRequest)

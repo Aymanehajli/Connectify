@@ -169,9 +169,16 @@ class test extends Controller
     
     public function getActiveUsers()
     {
-        $users = User::where('active_status', true)->get(['name','image']);
-        
-        return response()->json(['users' => $users]);
+        $activeUsers = User::where('active_status', 1)->get();
+
+        return response()->json([
+            'users' => $activeUsers->map(function ($user) {
+                return [
+                    'name' => $user->name,
+                    'image' => $user->image, // Replace with your profile picture attribute
+                ];
+            })
+        ]);
     }
 
     

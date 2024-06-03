@@ -1,6 +1,6 @@
 @include('navbar.nav')
 
-{{dd("")}}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -53,55 +53,26 @@
     </aside>
 
     <script>
-        function fetchOnlineUsers() {
-    fetch("/getActiveUsers")
-        .then(response => response.json())
-        .then(data => {
-            if (data.users && data.users.length > 0) {
-                const onlineUsersDiv = document.getElementById('online-users');
+function fetchOnlineUsers() {
+  fetch("/getActiveUsers")
+    .then(response => response.json())
+    .then(data => {
+      const onlineUsersDiv = document.getElementById('online-users');
+      onlineUsersDiv.innerHTML = ''; // Clear existing users
 
-                // Clear existing online users list
-                onlineUsersDiv.innerHTML = '';
-
-                // Loop through online users and create user cards
-                data.users.forEach(user => {
-                    const userCard = document.createElement('div');
-                    userCard.classList.add('user-card');
-
-                    // User image
-                    const userImage = document.createElement('img');
-                    userImage.src = user.image;
-                    userImage.alt = user.name;
-                    userCard.appendChild(userImage);
-
-                    // User info container
-                    const userInfo = document.createElement('div');
-                    userInfo.classList.add('user-info');
-
-                    // User name
-                    const userName = document.createElement('div');
-                    userName.classList.add('user-name');
-                    userName.textContent = user.name;
-                    userInfo.appendChild(userName);
-
-                    // Append user card to online users list
-                    userCard.appendChild(userInfo);
-
-                    // Append user card to online users list
-                    onlineUsersDiv.appendChild(userCard);
-                });
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching online users:', error);
-        });
+      data.users.forEach(user => {
+        // Use user.name and user.image to populate your user cards
+      });
+    })
+    .catch(error => {
+      console.error('Error fetching online users:', error);
+    });
 }
 
-// Initial fetch and then polling every 5 seconds
+// Call on initial load and every 5 seconds
 fetchOnlineUsers();
 setInterval(fetchOnlineUsers, 5000);
-
-    </script>
+</script>
 </body>
 </html>
 
