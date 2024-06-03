@@ -91,6 +91,7 @@ public function fetchUnseenMessages(Request $request) {
             return [
                 'id' => $message->id,
                 'body' => $message->body,
+                'attachment' => $message->attachment,
                 'from_id' => $message->from_id,
                 'to_id' => $message->to_id,
                 'timestamp' => $message->created_at,
@@ -125,6 +126,7 @@ public function fetchMessages(Request $request)
                 return [
                     'id' => $message->id,
                     'body' => $message->body,
+                    'attachment' => $message->attachment,
                     'from_id' => $message->from_user_id,
                     'to_id' => $message->to_user_id,
                     'timestamp' => $message->created_at,

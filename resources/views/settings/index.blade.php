@@ -54,6 +54,17 @@
         .strong {
             color: green;
         }
+
+        .password-toggle {
+            position: relative;
+        }
+        .password-toggle .toggle-icon {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -110,22 +121,35 @@
             </section>
             
             <section id="account">
-                <h2>Account Settings</h2>
-                <form id="accountForm" action="{{ route('settings.updateAccount') }}" method="POST">
-                    @csrf
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <input type="password" class="form-control" id="password" name="password" required>
-                        <div id="passwordStrength" class="strength-indicator"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="password_confirmation">Confirm Password</label>
-                        <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" required>
-                    </div>
-                    <button type="submit" id="submitBtn" class="btn btn-primary">Save Changes</button>
-                </form>
-                <hr>
-            </section>
+        <h2>Account Settings</h2>
+        <form id="accountForm" action="{{ route('settings.updateAccount') }}" method="POST">
+            @csrf
+            <div class="form-group">
+                <label for="old_password">Old Password</label>
+                <div class="password-toggle">
+                    <input type="password" class="form-control" id="old_password" name="old_password" required>
+                    <i class="fas fa-eye toggle-icon" onclick="togglePassword('old_password')"></i>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="password">New Password</label>
+                <div class="password-toggle">
+                    <input type="password" class="form-control" id="password" name="password" required>
+                    <i class="fas fa-eye toggle-icon" onclick="togglePassword('password')"></i>
+                </div>
+                <div id="passwordStrength" class="strength-indicator"></div>
+            </div>
+            <div class="form-group">
+                <label for="password_confirmation">Confirm New Password</label>
+                <div class="password-toggle">
+                    <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" required>
+                    <i class="fas fa-eye toggle-icon" onclick="togglePassword('password_confirmation')"></i>
+                </div>
+            </div>
+            <button type="submit" id="submitBtn" class="btn btn-primary">Save Changes</button>
+        </form>
+        <hr>
+    </section>
             
             <section id="delete">
                 <h2>Delete Account</h2>
@@ -143,6 +167,20 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
+        function togglePassword(id) {
+            const input = document.getElementById(id);
+            const icon = input.nextElementSibling;
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+            } else {
+                input.type = "password";
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+            }
+        }
+
         const passwordInput = document.getElementById('password');
         const passwordStrength = document.getElementById('passwordStrength');
         const submitBtn = document.getElementById('submitBtn');

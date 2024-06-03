@@ -59,8 +59,15 @@ class SettingsController extends Controller
     public function updateAccount(Request $request)
     {
         $request->validate([
+            'old_password' => 'required',
             'password' => 'required|string|min:8|confirmed',
         ]);
+
+        $user = auth()->user();
+
+        if (!Hash::check($request->old_password, $user->password)) {
+            return back()->with('status', 'Old password does not match our records.');
+        }
         
         DB::table('users')
     ->where('id', Auth::id())

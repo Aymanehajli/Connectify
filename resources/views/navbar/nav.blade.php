@@ -42,8 +42,10 @@
             transition: all 0.3s ease;
         }
 
-        .facebook-navbar .navbar-nav .nav-link:hover {
-            color: rgba(255, 255, 255, 0.8);
+
+        .facebook-navbar .navbar-nav .nav-link:hover,
+        .facebook-navbar .navbar-nav .nav-link.active {
+            color: rgba(255, 255, 150, 0.8);
         }
 
         .facebook-navbar .nav-item.dropdown .dropdown-toggle::after {
@@ -111,21 +113,21 @@
                 <ul class="navbar-nav mr-auto">
                     @auth
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('user.index') }}">Show all users</a>
+                            <a class="nav-link {{ request()->routeIs('user.index') ? 'active' : '' }}" href="{{ route('user.index') }}">Show all users</a>
                         </li>
                         <li class="nav-item">
                         
-                            <a class="nav-link" href="{{ route('publication.index') }}">Home</a>
+                            <a class="nav-link {{ request()->routeIs('publication.index') ? 'active' : '' }}" href="{{ route('publication.index') }}">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('friends.index') }}">Friends</a>
+                            <a class="nav-link {{ request()->routeIs('friends.index') ? 'active' : '' }}" href="{{ route('friends.index') }}">Friends</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('friend-requests') }}">Friend requests</a>
+                            <a class="nav-link {{ request()->routeIs('friend-requests') ? 'active' : '' }}" href="{{ route('friend-requests') }}">Friend requests</a>
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('chat.index') }}">Messages</a>
+                            <a class="nav-link {{ request()->routeIs('chat.index') ? 'active' : '' }}" href="{{ route('chat.index') }}">Messages</a>
                         </li>
                         
                        

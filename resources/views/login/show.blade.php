@@ -36,7 +36,10 @@
   <div class="row mb-3">
     <label  class="col-sm-2 col-form-label">Password</label>
     <div class="col-sm-10">
-      <input type="password" name="password" class="form-control" >
+    <div class="password-toggle">
+      <input type="password" name="password" id="password" class="form-control" >
+      <i class="fas fa-eye toggle-icon" onclick="togglePassword('password')"></i>
+                </div>
     </div>
   </div>
   
@@ -49,3 +52,33 @@
 
 
 </div>
+<style>
+  
+  .password-toggle {
+            position: relative;
+        }
+        .password-toggle .toggle-icon {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+    
+</style>
+
+<script>
+        function togglePassword(id) {
+            const input = document.getElementById(id);
+            const icon = input.nextElementSibling;
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+            } else {
+                input.type = "password";
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+            }
+        }
+</script>
