@@ -11,8 +11,8 @@ use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpKernel\Profiler\Profile;
 
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
-
-
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Session;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -29,10 +29,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->registerPolicies();
-
-        Gate::define('update-publication',function(GenericUser $user,Publication $publication){
-            return $user->id === $publication->user_id;
+        
+        // Apply the locale from session if available
+        $this->app['router']->matched(function () {
+            $locale = Session::get('app_locale', config('app.locale'));
+            App::setLocale($locale);
         });
 
         

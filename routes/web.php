@@ -4,6 +4,7 @@ use App\Http\Controllers\BlockController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\FriendController;
 use App\Http\Controllers\FriendRequestController;
+use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\test;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\NotificationController;
@@ -115,6 +116,7 @@ Route::get('/settings', [SettingsController::class, 'index'])->name('settings.in
 Route::post('/settings/profile', [SettingsController::class, 'updateProfile'])->name('settings.updateProfile');
 Route::post('/settings/account', [SettingsController::class, 'updateAccount'])->name('settings.updateAccount');
 Route::post('/settings/image', [SettingsController::class, 'updateProfileimage'])->name('settings.image');
+Route::post('/language', [SettingsController::class, 'switchLanguage'])->name('language.switch');
 
 
 Route::get('/friends', [FriendController::class, 'index'])->name('friends.index');
@@ -131,3 +133,6 @@ Route::post('/unblock/{id}', [BlockController::class, 'unblock'])->name('unblock
 Route::get('/blocked', function () {
     return view('blocked');
 })->name('blocked');
+
+
+

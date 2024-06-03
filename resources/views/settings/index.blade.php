@@ -1,7 +1,9 @@
 @include('navbar.nav')
+<!-- Add this code where you want to display the current language code -->
+
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ app()->getLocale() }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -75,6 +77,8 @@
             <ul class="settings-nav">
           <li><a href="#profile" class="settings-link">Profile Settings</a></li>
           <li><a href="#account" class="settings-link">Account Settings</a></li>
+          <li><a href="#language" class="settings-link">Language</a></li>
+
           <li><a href="#delete" class="settings-link" >Delete Account</a></li>
          
         </ul>
@@ -87,7 +91,8 @@
                 </div>
             @else
                 <div class="alert alert-warning">
-                    {{ session('status') }}
+                
+                {{ session('success') }}
                 </div>
             @endif
 
@@ -105,7 +110,7 @@
             </section>
 
             <section id="profile">
-                <h2>Profile Settings</h2>
+            <h2>{{ __('messages.profile') }}</h2>
                 <form action="{{ route('settings.updateProfile') }}" method="POST">
                     @csrf
                     <div class="form-group">
@@ -151,6 +156,24 @@
         </form>
         <hr>
     </section>
+
+    <section id="language">
+    <h2>Language Settings</h2>
+    <form id="languageForm" method="POST" action="{{ route('language.switch') }}">
+        @csrf
+        <div class="form-group">
+            <label for="language">Select Language</label>
+            <select class="form-control" id="language" name="language" onchange="document.getElementById('languageForm').submit()">
+                <option value="en" {{ App::getLocale() == 'en' ? 'selected' : '' }}>English</option>
+                <option value="fr" {{ App::getLocale() == 'fr' ? 'selected' : '' }}>French</option>
+                <option value="es" {{ App::getLocale() == 'es' ? 'selected' : '' }}>Spanish</option>
+                <!-- Add more languages as needed -->
+            </select>
+        </div>
+    </form>
+    <hr>
+</section>
+
             
             <section id="delete">
                 <h2>Delete Account</h2>
@@ -230,3 +253,5 @@
     </script>
 </body>
 </html>
+
+

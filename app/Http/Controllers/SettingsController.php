@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Auth\GenericUse;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Session;
 
 class SettingsController extends Controller
 {
@@ -15,7 +17,9 @@ class SettingsController extends Controller
     { 
         
         $user = Auth::user();
-        return view('settings.index', compact('user'));
+        $currentLocale = App::getLocale();
+
+        return view('settings.index', compact('user','currentLocale'));
     }
     public function updateProfileimage(Request $request)
     {
@@ -33,6 +37,21 @@ class SettingsController extends Controller
         return redirect()->route('settings.index')->with('status', 'Profile picture updated successfully.');
     }
 
+
+    public function switchLanguage(Request $request)
+    {
+        $language = $request->input('language');
+        $languages = ['en', 'fr', 'es']; // Add more languages as needed
+
+        if (in_array($language, $languages)) {
+            Session::put('app_locale', $language);
+            App::setLocale($language);
+        }
+        $user = Auth::user();
+        $currentLocale = App::getLocale();
+
+        return view('settings.index', compact('user','currentLocale'));
+    }
 
     public function updateProfile(Request $request)
     {
