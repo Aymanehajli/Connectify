@@ -2,6 +2,11 @@
 <?php
 return [
     'profile' => 'Profile',
+    'email' => 'Your email',
+    'delete_account_confirmation' => 'Are you sure you want to delete your account? This action cannot be undone.',
+    'username' => 'Your username',
+    'profile_image' => 'Profile image',
+    'profile_settings' => 'Profil settings',
     'settings' => 'Settings',
     'account_settings' => 'Account Settings',
     'language_settings' => 'Language Settings',

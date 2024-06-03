@@ -2,6 +2,11 @@
 <?php
 return [
     'profile' => 'Profil',
+    'email' => 'Votre email',
+    'delete_account_confirmation' => 'Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.',
+    'profile_image' => 'Photo de profil',
+    'username' => 'Votre nom  ',
+    'profile_settings' => 'Profil parametres',
     'settings' => 'Paramètres',
     'account_settings' => 'Paramètres du compte',
     'language_settings' => 'Paramètres de langue',
