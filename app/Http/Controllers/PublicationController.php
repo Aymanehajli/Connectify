@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\PublicationRequest;
 use App\Models\Comment;
+use App\Models\Friend;
 use App\Models\Like;
 use App\Models\Notification;
 use App\Models\Publication;
+use App\Models\User;
 use Illuminate\Auth\Access\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -79,9 +81,42 @@ public function dislike(Request $request, $id)
         ->get();
     
       $user = Auth::user();
-      
-   
-      return view('publication.index',compact('publications','user'));
+
+      $friendSuggestions = User::where('id', '!=', auth()->id())
+        ->whereNotIn('id', function ($query) {
+            $query->select('friend_id')
+                  ->from('friends')
+                  ->where('user_id', auth()->id())
+                  ->where('status', 'accepted'); // Vous pouvez ajouter d'autres conditions si nécessaire
+        })
+        ->inRandomOrder()
+        ->take(5)
+        ->get();
+
+        
+       
+        $friends = $this->getFriends($user->id);
+
+       
+     
+      return view('publication.index',compact('publications','user','friendSuggestions','friends'));
+    }
+
+
+    private function getFriends($userId)
+    {
+        
+        $friendRequests = Friend::where(function ($query) use ($userId) {
+            $query->where('user_id', $userId)
+                  ->orWhere('friend_id', $userId);
+        })->where('status', 'accepted')->get();
+
+        
+        $friendIds = $friendRequests->map(function ($friendRequest) use ($userId) {
+            return $friendRequest->user_id == $userId ? $friendRequest->friend_id : $friendRequest->user_id;
+        });
+
+        return User::whereIn('id', $friendIds)->get();
     }
 
     /**

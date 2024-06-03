@@ -3,97 +3,129 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
 <center>
-    <div class="container">
-        <div class="profile-header">
-            <div class="profile-avatar">
-                <img src="{{ asset('storage/' . $user->image) }}" alt="Avatar" width="100">
+  <div class="container">
+    <div class="profile-header">
+      <div class="profile-avatar">
+        <img src="{{ asset('storage/' . $user->image) }}" alt="Avatar" width="100">
+      </div>
+      <div class="profile-info">
+        <h1>{{ $user->name }}</h1>
+        <p>{{ $user->email }}</p>
+        
+        @if (auth()->id()!=$user->id)
+          @if (!$isBlocked)
+            <div id="acceptBtnContainer"></div>
+            <div class="row">
+              <div id="friendship-buttons"></div>
+              <form id="sendMessageForm">
+                @csrf
+                <input type="hidden" name="from_id" value="{{ auth()->id() }}">
+                <input id="profileIdInput" type="hidden" name="to_id" value="{{ $user->id }}">
+                <input type="hidden" name="body" value="Hello, I want to connect with you!"> <button type="button" id="sendMessageBtn" data-profile-id="{{ $user->id }}">Message</button>
+              </form>
+              @if (!$user->isBlockedBy(auth()->user()))
+                <form action="{{ route('block', $user->id) }}" method="POST">
+                  @csrf
+                  <button type="submit" class="btn btn-danger">Block</button>
+                </form>
+              @elseif ($auth1->hasBlocked($user))
+                <form action="{{ route('unblock', $user->id) }}" method="POST">
+                  @csrf
+                  <button type="submit" class="btn btn-primary">Unblock</button>
+                </form>
+              @endif
             </div>
-            <div class="profile-info">
-                <h1>{{ $user->name }}</h1>
-                <p>{{ $user->email }}</p>
-               
-              @if (auth()->id()!=$user->id)
-              @if (!$isBlocked)
-                <div id="acceptBtnContainer"></div>
-                <div class="row">
-                    <div id="friendship-buttons"></div>
-                    <form id="sendMessageForm">
-                        @csrf
-                        <input type="hidden" name="from_id" value="{{ auth()->id() }}">
-                        <input id="profileIdInput" type="hidden" name="to_id" value="{{ $user->id }}">
-                        <input type="hidden" name="body" value="Hello, I want to connect with you!"> <!-- Sample message body -->
-                        <button type="button" id="sendMessageBtn" data-profile-id="{{ $user->id }}">Message</button>
-                    </form>
-                    @if (!$user->isBlockedBy(auth()->user()))
-                        <form action="{{ route('block', $user->id) }}" method="POST">
-                            @csrf
-                            <button type="submit" class="btn btn-danger">Block</button>
-                        </form>
-                    @elseif ($auth1->hasBlocked($user))
-                        <form action="{{ route('unblock', $user->id) }}" method="POST">
-                            @csrf
-                            <button type="submit" class="btn btn-primary">Unblock</button>
-                        </form>
-                    @endif
-                    @endif
-                    @endif
-                </div>
-            </div>
-        </div>
+          @endif
+        @endif
+      </div>
     </div>
+  </div>
 </center>
-
-@if (auth()->id() == $user->id)
-    @include('components.createpost')
-@endif
 
 <br><br>
 
 @if ($isBlocked)
-    
-<div class="container">
-        <div class="alert alert-danger mt-5">
-            <h4>You have been blocked by this user. You cannot access this page.</h4>
+   
+  <div class="container">
+    <div class="alert alert-danger mt-5">
+      <h4>You have been blocked by this user. You cannot access this page.</h4>
+    </div>
+  </div>
+
+  
+@else
+<div class="container-fluid d-flex flex-column justify-content-center align-items-center">
+  @if (auth()->id() == $user->id)
+    @include('components.createpost')
+  @endif
+
+  <div class="row w-125 mt-5">
+    <div class="col-md-6 mx-auto">
+      <div class="card shadow-sm border">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h3>Publications</h3>
+          
         </div>
+        <div class="card-body">
+          @foreach($user->publications as $publication)
+            <x-publication :canUpdate="auth()->user()->id === $publication->user_id" :publication="$publication" class="mb-3" />
+          @endforeach
+        </div>
+      </div>
     </div>
 
-    
-@else
-    <div class="container w-45 mx-auto">
-        <h3>Publications :</h3>
-        <br>
-        <div class="row">
-            @foreach ($user->publications as $publication)
-                <div class="row">
-                    <x-publication :canUpdate="auth()->user()->id === $publication->user_id" :publication="$publication" />
-                </div>
-            @endforeach
+    <div class="col-md-4 mx-auto">
+      <div class="card shadow-sm border">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h3>Friends</h3>
+          <a href="/friends" class="text-muted">See All</a>
         </div>
+        <div class="card-body">
+          <ul class="list-group">
+            @foreach($friends as $friend)
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                  <img src="{{ asset('storage/' . $friend->image) }}" alt="Avatar" width="40" class="rounded-circle mr-2">
+                  <span>{{ $friend->name }}</span>
+                </div>
+                <a href="/chat" class="btn btn-sm btn-outline-primary">Message</a>
+              </li>
+            @endforeach
+          </ul>
+        </div>
+      </div>
+
+      <div class="card shadow-sm border mt-3">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h3>Friend Suggestions</h3>
+          
+        </div>
+        <div class="card-body">
+          @foreach($friendSuggestions as $suggestedUser)
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <div class="d-flex align-items-center">
+                <img src="{{ asset('storage/' . $suggestedUser->image) }}" alt="Avatar" width="40" class="rounded-circle mr-2">
+                <span>{{ $suggestedUser->name }}</span>
+              </div>
+              <form action="{{ route('friend-request.send', $suggestedUser->id) }}" method="POST">
+                @csrf
+                <button type="submit" class="btn btn-sm btn-primary">Add Friend</button>
+              </form>
+            </div>
+          @endforeach
+        </div>
+      </div>
     </div>
-    <!-- Friend Suggestions Sidebar -->
-    <div class="col-md-4">
-            <h3>Friend Suggestions</h3>
-            @foreach($friendSuggestions as $suggestedUser)
-                <div class="card mb-2">
-                    <div class="card-body d-flex justify-content-between align-items-center">
-                        <div>
-                            <img src="{{ asset('storage/' . $suggestedUser->image) }}" alt="Avatar" width="50" class="rounded-circle">
-                            <span>{{ $suggestedUser->name }}</span>
-                        </div>
-                        <form action="{{ route('friend-request.send', $suggestedUser->id) }}" method="POST">
-                            @csrf
-                            <button type="submit" class="btn btn-primary btn-sm">Send Invitation</button>
-                        </form>
-                    </div>
-                </div>
-            @endforeach
-        </div>
+  </div>
+</div>
+
 @endif
 
 
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min"></script>
+
 <script>
     $(document).ready(function () {
         checkFriendship();

@@ -6,7 +6,7 @@ use App\Http\Requests\UserRequest;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Block;
-
+use App\Models\Friend;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -28,6 +28,23 @@ class test extends Controller
     }
  
 
+    private function getFriends($userId)
+    {
+        
+        $friendRequests = Friend::where(function ($query) use ($userId) {
+            $query->where('user_id', $userId)
+                  ->orWhere('friend_id', $userId);
+        })->where('status', 'accepted')->get();
+
+        
+        $friendIds = $friendRequests->map(function ($friendRequest) use ($userId) {
+            return $friendRequest->user_id == $userId ? $friendRequest->friend_id : $friendRequest->user_id;
+        });
+
+        return User::whereIn('id', $friendIds)->get();
+    }
+
+
     //show by id
     public function show(User $user)
     {
@@ -48,10 +65,11 @@ class test extends Controller
         ->take(5)
         ->get();
 
+        $friends = $this->getFriends($user->id);
 
         $isBlocked = $auth1->isBlockedBy($user1) || $user1->hasBlocked($auth1);
 
-        return view('user.show', compact('user','auth1','isBlocked','friendSuggestions'));
+        return view('user.show', compact('user','auth1','isBlocked','friendSuggestions','friends'));
     }
 
      //create formulaire
@@ -144,15 +162,15 @@ class test extends Controller
         'password' => $request->input('password'),
         'image' => $request->file('image')->store('userprofile','public'),
     ]);
-    return redirect()->route('user.index')->with('success', 'user$user modifiée avec succès');
+    return redirect()->route('user.index')->with('success', 'user modifiée avec succès');
     }
 
     
     
-    public function getActiveUsers(Request $request)
+    public function getActiveUsers()
     {
         $users = User::where('active_status', true)->get(['name','image']);
-
+        
         return response()->json(['users' => $users]);
     }
 

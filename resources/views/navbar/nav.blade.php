@@ -113,10 +113,6 @@
                 <ul class="navbar-nav mr-auto">
                     @auth
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('user.index') ? 'active' : '' }}" href="{{ route('user.index') }}">Show all users</a>
-                        </li>
-                        <li class="nav-item">
-                        
                             <a class="nav-link {{ request()->routeIs('publication.index') ? 'active' : '' }}" href="{{ route('publication.index') }}">Home</a>
                         </li>
                         <li class="nav-item">
@@ -124,6 +120,9 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('friend-requests') ? 'active' : '' }}" href="{{ route('friend-requests') }}">Friend requests</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('activeUser') ? 'active' : '' }}" href="{{ route('activeUser') }}">Active user</a>
                         </li>
 
                         <li class="nav-item">
