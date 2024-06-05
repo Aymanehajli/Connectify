@@ -13,6 +13,7 @@
             margin: 0;
             font-family: Arial, Helvetica, sans-serif;
         }
+        
         .container {
             display: flex;
             height: 100vh;
@@ -135,6 +136,92 @@
             border-radius: 5px;
             margin-bottom: 10px;
         }
+        /* Modal Styling */
+.modal-content {
+    border-radius: 10px;
+}
+
+.modal-header {
+    background-color: #007bff;
+    color: white;
+    padding: 15px;
+    border-bottom: none;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.modal-header .close {
+    color: white;
+    opacity: 1;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.modal-footer {
+    border-top: none;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+/* User List Styling */
+.user-list {
+    max-height: 400px;
+    overflow-y: auto;
+    margin-top: 10px;
+}
+
+.user-card {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #dee2e6;
+    transition: background-color 0.3s;
+}
+
+.user-card:hover {
+    background-color: #f1f1f1;
+}
+
+.user-card img {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+}
+
+.user-card .user-info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.user-card .user-info .user-name {
+    font-weight: bold;
+    font-size: 0.9em;
+}
+
+.user-card .user-info .user-email {
+    font-size: 0.8em;
+    color: gray;
+}
+
+        .new-conversation-btn {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .new-conversation-btn:hover {
+            background-color: #218838;
+        }
         @media (max-width: 768px) {
             .container {
                 flex-direction: column;
@@ -153,10 +240,10 @@
     </style>
 </head>
 <body>
-    
     <div class="container">
         <div class="sidebar">
             <input type="text" class="search-input" placeholder="Search for users..." oninput="searchUsers(this.value)">
+            <button class="new-conversation-btn" onclick="openNewConversationModal()">Start New Conversation</button>
             <div id="user-list">
                 @php
                     $conversations = [];
@@ -193,7 +280,6 @@
         </div>
 
         <div class="chat-window">
-            
             <div class="chat-header hidden">
                 <img src="https://via.placeholder.com/30" alt="User Image" id="chat-header-image">
                 <strong id="chat-header-name">Conversation Name</strong>
@@ -219,9 +305,43 @@
         </div>
     </div>
 
+
+   <!-- Modal -->
+<div class="modal fade" id="newConversationModal" tabindex="-1" aria-labelledby="startConversationLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="newConversationLabel">Start New Conversation</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="user-list">
+                    @foreach ($users as $user)
+                        <div class="user-card" onclick="startNewConversation('{{ $user->id }}', '{{ $user->name }}', '{{ asset('storage/' . $user->image) }}')">
+                            <img src="{{ asset('storage/' . $user->image) }}" alt="{{ $user->name }}">
+                            <div class="user-info">
+                                <div class="user-name">{{ $user->name }}</div>
+                                <div class="user-email">{{ $user->email }}</div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
     <script>
-        let currentConversationId = null;
-        let lastMessageTimestamp = null;
+        var currentConversationId = null;
+        var lastMessageTimestamp = null;
+        var authUserId = '{{ $authUserId }}';
+
 
         function openChat(conversationId, conversationName, conversationImage) {
             document.querySelectorAll('.chat-header, .chat-footer').forEach(el => el.classList.remove('hidden'));
@@ -276,7 +396,7 @@
 
         let displayedMessageIds = new Set();
 
-function pollUnseenMessages() {
+        function pollUnseenMessages() {
     if (currentConversationId) {
         fetch("{{ route('chat.fetchUnseenMessages') }}", {
             method: 'POST',
@@ -320,39 +440,7 @@ function pollUnseenMessages() {
 setInterval(pollUnseenMessages, 1000); // Poll every 5 seconds
 
 
-        function fetchMessages(conversationId) {
-            fetch(`/chat/fetchMessages?conversationId=${conversationId}&lastTimestamp=${lastMessageTimestamp || ''}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        var chatHistory = document.querySelector('.chat-history');
 
-                        data.messages.forEach(message => {
-                            var messageContainer = document.createElement('div');
-                            messageContainer.classList.add('message-container');
-                            messageContainer.setAttribute('data-conversation', conversationId);
-
-                            var messageContent = document.createElement('div');
-                            messageContent.classList.add('message-content');
-                            messageContent.textContent = message.body;
-
-                            if (message.from_id == authUserId) {
-                                messageContent.classList.add('my-message');
-                            } else {
-                                messageContent.classList.add('other-message');
-                            }
-
-                            messageContainer.appendChild(messageContent);
-                            chatHistory.appendChild(messageContainer);
-
-                            lastMessageTimestamp = message.timestamp;
-                        });
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-        }
 
         function searchUsers(query) {
             const userList = document.getElementById('user-list');
@@ -364,44 +452,7 @@ setInterval(pollUnseenMessages, 1000); // Poll every 5 seconds
             });
         }
 
-        function pollMessages() {
-            if (currentConversationId) {
-                fetch(`/chat/pollMessages?conversationId=${currentConversationId}&lastTimestamp=${lastMessageTimestamp || ''}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            var chatHistory = document.querySelector('.chat-history');
-
-                            data.messages.forEach(message => {
-                                var messageContainer = document.createElement('div');
-                                messageContainer.classList.add('message-container');
-                                messageContainer.setAttribute('data-conversation', currentConversationId);
-
-                                var messageContent = document.createElement('div');
-                                messageContent.classList.add('message-content');
-                                messageContent.textContent = message.body;
-
-                                if (message.from_id == authUserId) {
-                                    messageContent.classList.add('my-message');
-                                } else {
-                                    messageContent.classList.add('other-message');
-                                }
-
-                                messageContainer.appendChild(messageContent);
-                                chatHistory.appendChild(messageContainer);
-
-                                lastMessageTimestamp = message.timestamp;
-                            });
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                    });
-            }
-        }
-
-        setInterval(pollMessages, 5000); // Poll every 5 seconds
-    
+   
         function openChat(conversationId, conversationName, conversationImage) {
     document.querySelectorAll('.chat-header, .chat-footer').forEach(el => el.classList.remove('hidden'));
     document.getElementById('chat-header-image').src = conversationImage;
@@ -413,11 +464,11 @@ setInterval(pollUnseenMessages, 1000); // Poll every 5 seconds
         el.style.display = el.getAttribute('data-conversation') === conversationId ? 'block' : 'none';
     });
 
-    fetchMessages(conversationId);
-    markMessagesAsRead(conversationId); // Mark messages as read when conversation is opened
-}
+            fetchMessages(conversationId);
+            markMessagesAsRead(conversationId); // Mark messages as read when conversation is opened
+        }
 
-function markMessagesAsRead(conversationId) {
+        function markMessagesAsRead(conversationId) {
     fetch("{{ route('chat.markAsRead') }}", {
         method: 'POST',
         body: JSON.stringify({ conversationId: conversationId }),
@@ -436,7 +487,29 @@ function markMessagesAsRead(conversationId) {
     });
 }
 
-    
+
+        function openNewConversationModal() {
+            $('#newConversationModal').modal('show');
+        }
+
+        function startNewConversation(userId, userName, userImage) {
+            $('#newConversationModal').modal('hide');
+            openChat(userId, userName, userImage);
+        }
+
+        function searchUsersForNewConversation(query) {
+            const userList = document.getElementById('new-conversation-user-list');
+            const chatCards = userList.querySelectorAll('.chat-card');
+
+            chatCards.forEach(card => {
+                const chatName = card.querySelector('.chat-name').textContent.toLowerCase();
+                card.style.display = chatName.includes(query.toLowerCase()) ? 'flex' : 'none';
+            });
+        }
     </script>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
