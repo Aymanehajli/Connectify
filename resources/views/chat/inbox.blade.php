@@ -1,4 +1,4 @@
-@include('navbar.nav')
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -240,6 +240,7 @@
     </style>
 </head>
 <body>
+@include('navbar.nav')
     <div class="container">
         <div class="sidebar">
             <input type="text" class="search-input" placeholder="Search for users..." oninput="searchUsers(this.value)">
@@ -355,6 +356,8 @@
             });
 
             fetchMessages(conversationId);
+            markMessagesAsRead(conversationId); 
+
         }
 
         document.querySelectorAll('.sendMessageBtn').forEach(button => {

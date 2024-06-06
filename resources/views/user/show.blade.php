@@ -12,7 +12,7 @@
         <h1>{{ $user->name }}</h1>
         <p>{{ $user->email }}</p>
         
-        @if (auth()->id()!=$user->id)
+        @if (auth()->id() != $user->id)
           @if (!$isBlocked)
             <div id="acceptBtnContainer"></div>
             <div class="row">
@@ -21,7 +21,8 @@
                 @csrf
                 <input type="hidden" name="from_id" value="{{ auth()->id() }}">
                 <input id="profileIdInput" type="hidden" name="to_id" value="{{ $user->id }}">
-                <input type="hidden" name="body" value="Hello, I want to connect with you!"> <button type="button" id="sendMessageBtn" data-profile-id="{{ $user->id }}">Message</button>
+                <input type="hidden" name="body" value="Hello, I want to connect with you!">
+                <button type="button" id="sendMessageBtn" data-profile-id="{{ $user->id }}">Message</button>
               </form>
               @if (!$user->isBlockedBy(auth()->user()))
                 <form action="{{ route('block', $user->id) }}" method="POST">
@@ -45,26 +46,23 @@
 <br><br>
 
 @if ($isBlocked)
-   
   <div class="container">
     <div class="alert alert-danger mt-5">
       <h4>You have been blocked by this user. You cannot access this page.</h4>
     </div>
   </div>
-
-  
 @else
 <div class="container-fluid d-flex flex-column justify-content-center align-items-center">
   @if (auth()->id() == $user->id)
     @include('components.createpost')
   @endif
 
-  <div class="row w-125 mt-5">
-    <div class="col-md-6 mx-auto">
+  <div class="row w-100 mt-5">
+    <!-- Publications Section -->
+    <div class="col-md-8">
       <div class="card shadow-sm border">
         <div class="card-header d-flex justify-content-between align-items-center">
           <h3>Publications</h3>
-          
         </div>
         <div class="card-body">
           @foreach($user->publications as $publication)
@@ -74,54 +72,55 @@
       </div>
     </div>
 
-    <div class="col-md-4 mx-auto">
-      <div class="card shadow-sm border">
-        <div class="card-header d-flex justify-content-between align-items-center">
-          <h3>Friends</h3>
-          <a href="/friends" class="text-muted">See All</a>
+    <!-- Friends and Friend Suggestions Section -->
+    <div class="col-md-4">
+      <div class="sticky-top">
+        <!-- Friends Section -->
+        <div class="card shadow-sm border mb-3">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h3>Friends</h3>
+            <a href="/friends" class="text-muted">See All</a>
+          </div>
+          <div class="card-body">
+            <ul class="list-group">
+              @foreach($friends as $friend)
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  <div class="d-flex align-items-center">
+                    <img src="{{ asset('storage/' . $friend->image) }}" alt="Avatar" width="40" class="rounded-circle mr-2">
+                    <span>{{ $friend->name }}</span>
+                  </div>
+                  <a href="/chat" class="btn btn-sm btn-outline-primary">Message</a>
+                </li>
+              @endforeach
+            </ul>
+          </div>
         </div>
-        <div class="card-body">
-          <ul class="list-group">
-            @foreach($friends as $friend)
-              <li class="list-group-item d-flex justify-content-between align-items-center">
-                <div class="d-flex align-items-center">
-                  <img src="{{ asset('storage/' . $friend->image) }}" alt="Avatar" width="40" class="rounded-circle mr-2">
-                  <span>{{ $friend->name }}</span>
-                </div>
-                <a href="/chat" class="btn btn-sm btn-outline-primary">Message</a>
-              </li>
-            @endforeach
-          </ul>
-        </div>
-      </div>
 
-      <div class="card shadow-sm border mt-3">
-        <div class="card-header d-flex justify-content-between align-items-center">
-          <h3>Friend Suggestions</h3>
-          
-        </div>
-        <div class="card-body">
-          @foreach($friendSuggestions as $suggestedUser)
-            <div class="d-flex justify-content-between align-items-center mb-2">
-              <div class="d-flex align-items-center">
-                <img src="{{ asset('storage/' . $suggestedUser->image) }}" alt="Avatar" width="40" class="rounded-circle mr-2">
-                <span>{{ $suggestedUser->name }}</span>
+        <!-- Friend Suggestions Section -->
+        <div class="card shadow-sm border">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h3>Friend Suggestions</h3>
+          </div>
+          <div class="card-body">
+            @foreach($friendSuggestions as $suggestedUser)
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <div class="d-flex align-items-center">
+                  <img src="{{ asset('storage/' . $suggestedUser->image) }}" alt="Avatar" width="40" class="rounded-circle mr-2">
+                  <span>{{ $suggestedUser->name }}</span>
+                </div>
+                <form action="{{ route('friend-request.send', $suggestedUser->id) }}" method="POST">
+                  @csrf
+                  <button type="submit" class="btn btn-sm btn-primary">Add Friend</button>
+                </form>
               </div>
-              <form action="{{ route('friend-request.send', $suggestedUser->id) }}" method="POST">
-                @csrf
-                <button type="submit" class="btn btn-sm btn-primary">Add Friend</button>
-              </form>
-            </div>
-          @endforeach
+            @endforeach
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
-
 @endif
-
-
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min"></script>
@@ -218,3 +217,11 @@
         });
     });
 </script>
+
+<style>
+  .sticky-top {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 20px; /* Adjust this value to control the sticky position */
+  }
+</style>

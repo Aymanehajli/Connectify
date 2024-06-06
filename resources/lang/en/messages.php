@@ -12,6 +12,7 @@ return [
     'language_settings' => 'Language Settings',
     'select_language' => 'Select Language',
     'english' => 'English',
+    'arabic' => 'Arabic',
     'french' => 'French',
     'spanish' => 'Spanish',
     'save_changes' => 'Save Changes',
@@ -26,4 +27,20 @@ return [
     'success' => 'Success',
     'delete_confirmation' => 'Delete Confirmation',
     'current_language' => 'Current Language',
+
+    //friend 
+    'friend_requests' => 'Friend Requests',
+'friend_requests_empty' => 'No Friend Requests',
+'accept' => 'Accept',
+'refuse' => 'Decline',
+'your_friends' => 'Your Friends (:count)',
+'friend_count' => 'Your Friends',
+'friend_count_empty' => 'You Have No Friends Yet',
+
+
+//friend request 
+'Friend_Requests' => 'Friend Requests',
+    'accept' => 'Accept',
+    'refuse' => 'Refuse',
+    'No_friend_requests' => 'No friend requests.',
 ];

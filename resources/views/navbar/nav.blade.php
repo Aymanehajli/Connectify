@@ -187,9 +187,9 @@
 </body>
 </html>
 
-<div class="container mt-3">
+
         <div id="searchResults"></div>
-    </div>
+    
 
 <style>
     .profilesearch-img {

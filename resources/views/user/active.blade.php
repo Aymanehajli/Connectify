@@ -1,4 +1,4 @@
-@include('navbar.nav')
+
 
 
 <!DOCTYPE html>
@@ -42,6 +42,7 @@
     </style>
 </head>
 <body>
+@include('navbar.nav')
     <aside class="sidebar">
         <!-- Search input -->
         <input type="text" class="search-input" placeholder="Search for users..." oninput="searchUsers(this.value)">

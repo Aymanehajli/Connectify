@@ -27,4 +27,14 @@ return [
     'success' => 'نجاح',
     'delete_confirmation' => 'تأكيد الحذف',
     'current_language' => 'اللغة الحالية',
+
+    //friend
+    'friend_requests' => 'طلبات الصداقة',
+'friend_requests_empty' => 'لا يوجد طلبات صداقة',
+'accept' => 'قبول',
+'refuse' => 'رفض',
+'your_friends' => 'أصدقاؤك (:count)',
+'friend_count' => 'أصدقاؤك',
+'friend_count_empty' => 'ليس لديك أصدقاء حتى الآن',
+
 ];

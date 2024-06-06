@@ -1,7 +1,7 @@
 @include('navbar.nav')
 
 <!DOCTYPE html>
-<html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -42,7 +42,7 @@
 </head>
 <body>
     <div class="friend-request-container">
-        <h2>Friend Requests (<span id="friend-count">{{ count($friendRequests) }}</span>)</h2>
+        <h2>{{ __('messages.Friend_Requests') }} (<span id="friend-count">{{ count($friendRequests) }}</span>)</h2>
           <div id="friend-request-list">
             
             @forelse ($friendRequests as $friendRequest)
@@ -52,12 +52,13 @@
                         <h5>{{ $friendRequest->sender->name }}</h5>
                     </div>
                     <div>
-                        <button class="btn btn-success accept-request" data-id="{{ $friendRequest->id }}">Accept</button>
-                        <button class="btn btn-danger refuse-request" data-id="{{ $friendRequest->id }}">Refuse</button>
+                        <button class="btn btn-success accept-request" data-id="{{ $friendRequest->id }}">{{ __('messages.Accept') }}</button>
+                        <button class="btn btn-danger refuse-request" data-id="{{ $friendRequest->id }}">{{ __('messages.Refuse') }}</button>
                     </div>
                 </div>
              @empty
-                <p>No friend requests.</p>
+                <p>{{ __('messages.No_friend_requests') }}</p>
+                
             @endforelse
         </div>
     </div>

@@ -27,4 +27,14 @@ return [
     'success' => 'Succès',
     'delete_confirmation' => 'Confirmation de suppression',
     'current_language' => 'Langue actuelle',
+
+    //friend
+    'friend_requests' => 'Demandes d\'amis',
+'friend_requests_empty' => 'Aucune demande d\'ami',
+'accept' => 'Accepter',
+'refuse' => 'Refuser',
+'your_friends' => 'Vos amis (:count)',
+'friend_count' => 'Vos amis',
+'friend_count_empty' => 'Vous n\'avez pas encore d\'amis',
+
 ];
