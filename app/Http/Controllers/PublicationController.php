@@ -82,6 +82,9 @@ public function dislike(Request $request, $id)
     
       $user = Auth::user();
 
+
+      
+
       $friendSuggestions = User::where('id', '!=', auth()->id())
         ->whereNotIn('id', function ($query) {
             $query->select('friend_id')
@@ -97,9 +100,11 @@ public function dislike(Request $request, $id)
        
         $friends = $this->getFriends($user->id);
 
+        $activeUsers =  $this->getFriendsOnline($user->id);
+
        
      
-      return view('publication.index',compact('publications','user','friendSuggestions','friends'));
+      return view('publication.index',compact('publications','user','friendSuggestions','friends','activeUsers'));
     }
 
 
@@ -118,6 +123,25 @@ public function dislike(Request $request, $id)
 
         return User::whereIn('id', $friendIds)->get();
     }
+
+    private function getFriendsOnline($userId)
+    {
+        
+        $friendRequests = Friend::where(function ($query) use ($userId) {
+            $query->where('user_id', $userId)
+                  ->orWhere('friend_id', $userId);
+        })->where('status', 'accepted')->get();
+
+        
+        $friendIds = $friendRequests->map(function ($friendRequest) use ($userId) {
+            return $friendRequest->user_id == $userId ? $friendRequest->friend_id : $friendRequest->user_id;
+        });
+
+        return User::whereIn('id', $friendIds)
+                ->where('active_status', 1) // Add the condition for active status
+                ->get();
+    }
+
 
     /**
      * Show the form for creating a new resource.
@@ -251,6 +275,13 @@ public function dislike(Request $request, $id)
                 'comment' => $comment->comment
             ]
         ]);
+    }
+
+    public function getActiveUsers()
+    {
+        $activeUsers = User::where('active_status', 1)->get();
+
+        return view('publication.index', compact('activeUsers'));
     }
 
 

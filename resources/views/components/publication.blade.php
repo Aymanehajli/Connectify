@@ -262,38 +262,38 @@
             });
 
             $(document).on('click', '.load-more-comments-btn', function() {
-                var button = $(this);
-                var postId = button.data('id');
-                var commentsList = $('#commentsList-' + postId);
-                var nextPageUrl = button.data('next-page-url');
+        var button = $(this);
+        var postId = button.data('id');
+        var commentsList = $('#commentsList-' + postId);
+        var nextPageUrl = button.data('next-page-url');
 
-                if (!nextPageUrl) {
-                    return;
-                }
+        if (!nextPageUrl) {
+            alert('No more comments to load.');
+            return;
+        }
 
-                $.ajax({
-                    url: nextPageUrl,
-                    type: 'GET',
-                    success: function(response) {
-                        if (response.success) {
-                            response.comments.forEach(function(comment) {
-                                commentsList.append('<div class="comment"><div class="user-profile"><img src="' + comment.user_image + '" alt="User Image"><div class="comment-body"><h6>' + comment.user_name + '</h6><p>' + comment.comment + '</p></div></div></div>');
-                            });
-                            if (response.next_page_url) {
-                                button.data('next-page-url', response.next_page_url);
-                            } else {
-                                button.hide();
-                            }
-                        } else {
-                            alert('An error occurred: ' + response.message);
-                        }
-                    },
-                    error: function(xhr) {
-                        alert('An error occurred: ' + xhr.responseText);
+        $.ajax({
+            url: nextPageUrl,
+            type: 'GET',
+            success: function(response) {
+                if (response.success) {
+                    response.comments.forEach(function(comment) {
+                        commentsList.append('<div class="comment"><div class="user-profile"><img src="' + comment.user_image + '" alt="User Image"><div class="comment-body"><h6>' + comment.user_name + '</h6><p>' + comment.comment + '</p></div></div></div>');
+                    });
+                    if (response.next_page_url) {
+                        button.data('next-page-url', response.next_page_url);
+                    } else {
+                        button.hide();
                     }
-                });
-            });
-
+                } else {
+                    alert('An error occurred: ' + response.message);
+                }
+            },
+            error: function(xhr) {
+                alert('An error occurred: ' + xhr.responseText);
+            }
+        });
+    });
             $(document).on('click', '.add-comment-btn', function() {
                 var button = $(this);
                 var postId = button.data('id');

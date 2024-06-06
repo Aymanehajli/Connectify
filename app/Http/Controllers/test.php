@@ -171,14 +171,7 @@ class test extends Controller
     {
         $activeUsers = User::where('active_status', 1)->get();
 
-        return response()->json([
-            'users' => $activeUsers->map(function ($user) {
-                return [
-                    'name' => $user->name,
-                    'image' => $user->image, // Replace with your profile picture attribute
-                ];
-            })
-        ]);
+        return view('user.active', compact('activeUsers'));
     }
 
     

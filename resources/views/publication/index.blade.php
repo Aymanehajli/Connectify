@@ -68,6 +68,28 @@
             @endforeach
           </div>
         </div>
+
+
+        <!--Online Friend Section -->
+        <div class="card shadow-sm border">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h3>Online friends</h3>
+          </div>
+          <div class="card-body">
+            @foreach($activeUsers as $activeUser)
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <a href="{{ route('user.show', $activeUser->id) }}" class="text-decoration-none d-flex align-items-center">
+                  <div class="d-flex align-items-center">
+                    <img src="{{ asset('storage/' . $activeUser->image) }}" alt="Avatar" width="40" class="rounded-circle mr-2">
+                    <span>{{ $activeUser->name }}</span>
+                  </div>
+                </a>
+              </div>
+            @endforeach
+          </div>
+        </div>
+
+
       </div>
     </div>
   </div>
