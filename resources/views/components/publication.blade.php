@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         /* Custom styles */
@@ -37,6 +36,12 @@
         .user-profile h5 {
             margin-bottom: 0;
             cursor: pointer;
+        }
+
+        .post-date {
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 15px;
         }
 
         .post-content {
@@ -119,6 +124,11 @@
                         <img src="{{ asset('storage/' . $publication->user->image) }}" alt="User Image">
                         <h5>{{ $publication->user->name }}</h5>
                     </a>
+                </div>
+
+                <!-- Post Date -->
+                <div class="post-date">
+                    <span>{{ $publication->created_at->format('F d, Y') }}</span>
                 </div>
 
                 <div class="post-content">
@@ -316,31 +326,30 @@
                 });
             });
 
-            
-    $(document).on('click', '.share-btn', function() {
-        var button = $(this);
-        var postId = button.data('id');
+            $(document).on('click', '.share-btn', function() {
+                var button = $(this);
+                var postId = button.data('id');
 
-        $.ajax({
-            url: '/publication/share/' + postId,
-            type: 'POST',
-            data: {
-                _token: '{{ csrf_token() }}'
-            },
-            success: function(response) {
-                if (response.success) {
-                    alert('Post shared successfully!');
-                    // Optionally update the UI or perform other actions
-                } else {
-                    alert('An error occurred: ' + response.message);
-                }
-            },
-            error: function(xhr) {
-                alert('An error occurred: ' + xhr.responseText);
-            }
+                $.ajax({
+                    url: '/publication/share/' + postId,
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            alert('Post shared successfully!');
+                            // Optionally update the UI or perform other actions
+                        } else {
+                            alert('An error occurred: ' + response.message);
+                        }
+                    },
+                    error: function(xhr) {
+                        alert('An error occurred: ' + xhr.responseText);
+                    }
+                });
+            });
         });
-    });
-});
     </script>
 </body>
 </html>
