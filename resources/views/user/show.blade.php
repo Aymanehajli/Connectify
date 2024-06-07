@@ -37,6 +37,12 @@
               @endif
             </div>
           @endif
+        
+        @else
+        <form action="{{route('settings.index')}}">
+          <button type="submite" class="btn btn-primary">Edit account</button>
+        </form>
+        
         @endif
       </div>
     </div>

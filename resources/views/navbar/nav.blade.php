@@ -122,7 +122,10 @@
                         <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('chat.index') ? 'active' : '' }}" href="{{ route('chat.index') }}">Messages</a>
                         </li>
-                        
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('user.show',auth()->id()) ? 'active' : '' }}" href="{{ route('user.show' ,auth()->id() ) }}">My account</a>
+                            </li>
+
                         
                        
                         
