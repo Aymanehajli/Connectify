@@ -188,8 +188,6 @@ public function dislike(Request $request, $id)
      */
     public function edit(Publication $publication)
     {
-       //baqi gates w policies
-
         return view('publication.edit',compact('publication'));
     }
 
@@ -198,14 +196,25 @@ public function dislike(Request $request, $id)
      */
     public function update(Request $request, Publication $publication)
     {
-        
-        //baqi gates w policies
+        $newData = [
+            'titre' => $request->input('titre'),
+            'body' => $request->input('body'),
+        ];
+        if ($request->hasFile('image')) {
+            $newData['image'] = $request->file('image')->store('publicationimage', 'public');
+        } else {
+            $newData['image'] = $publication->image; // Retain the existing image path if no new image is uploaded
+        }
 
-    $publication->update([
-        'titre' => $request->input('titre'),
-        'body' => $request->input('body'),
-        'image' => $request->file('image')->store('publicationimage','public'),
-    ]);
+
+        if ($request->hasFile('video')) {
+            $newData['video'] = $request->file('video')->store('publicationvideo', 'public');
+        } else {
+            $newData['video'] = $publication->video; // Retain the existing video path if no new video is uploaded
+        }
+    
+// Update the publication with the new data
+$publication->update($newData);
     return redirect()->route('publication.index')->with('success', 'Publication modifiée avec succès');
     }
 
@@ -216,7 +225,7 @@ public function dislike(Request $request, $id)
     {
         //
         $publication->delete(); 
-        return to_route('publication.index')->with('success','Votre compte est bien crée') ;
+        return to_route('publication.index')->with('success','Votre publication est bien supprimée ') ;
     }
     public function comments($id)
     {
