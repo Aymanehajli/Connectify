@@ -118,17 +118,11 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('friends.index') ? 'active' : '' }}" href="{{ route('friends.index') }}">Friends</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('friend-requests') ? 'active' : '' }}" href="{{ route('friend-requests') }}">Friend requests</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('activeUser') ? 'active' : '' }}" href="{{ route('activeUser') }}">Active user</a>
-                        </li>
-
+                            </li>
                         <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('chat.index') ? 'active' : '' }}" href="{{ route('chat.index') }}">Messages</a>
                         </li>
+                        
                         
                        
                         
@@ -168,6 +162,7 @@
             {{ auth()->user()->name }}
         </a>
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+        <a class="dropdown-item" href="{{ route('friend-requests') }}">Friend requests</a>
         <a class="dropdown-item" href="{{ route('block.index') }}">Blocked users</a>
             <a class="dropdown-item" href="{{ route('settings.index') }}">Settings</a>
             <a class="dropdown-item" href="{{ route('logout') }}">Déconnexion</a>
