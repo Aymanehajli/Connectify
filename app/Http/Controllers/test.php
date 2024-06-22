@@ -14,9 +14,8 @@ class test extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth');
-        
-    } 
+        $this->middleware('auth', ['except' => ['create', 'store']]);    }
+    
     
 
     //show all users
@@ -122,7 +121,7 @@ class test extends Controller
           //  'password' => $password,
         //]);
         
-        return response()->json(['success' => true]);
+        return view('login.show');
     }
 
 

@@ -52,8 +52,8 @@
                         <h5>{{ $friendRequest->sender->name }}</h5>
                     </div>
                     <div>
-                        <button class="btn btn-success accept-request" data-id="{{ $friendRequest->id }}">{{ __('messages.Accept') }}</button>
-                        <button class="btn btn-danger refuse-request" data-id="{{ $friendRequest->id }}">{{ __('messages.Refuse') }}</button>
+                        <button class="btn btn-success accept-request" data-id="{{ $friendRequest->id }}">Accept</button>
+                        <button class="btn btn-danger refuse-request" data-id="{{ $friendRequest->id }}">Refuse</button>
                     </div>
                 </div>
              @empty

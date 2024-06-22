@@ -7,7 +7,9 @@
     <title>Chat Interface</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <style>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+   <style>
         body, html {
             height: 100%;
             margin: 0;
@@ -241,6 +243,7 @@
 </head>
 <body>
 @include('navbar.nav')
+<br>
     <div class="container">
         <div class="sidebar">
             <input type="text" class="search-input" placeholder="Search for users..." oninput="searchUsers(this.value)">
@@ -339,8 +342,12 @@
     </div>
 </div>
 
+@php
+$authUserId = auth()->id() ;
+@endphp
 
     <script>
+
         var currentConversationId = null;
         var lastMessageTimestamp = null;
         var authUserId = '{{ $authUserId }}';
@@ -357,8 +364,8 @@
                 el.style.display = el.getAttribute('data-conversation') === conversationId ? 'block' : 'none';
             });
 
-            fetchMessages(conversationId);
-            markMessagesAsRead(conversationId); 
+            
+            
 
         }
 
@@ -469,7 +476,10 @@ setInterval(pollUnseenMessages, 1000); // Poll every 5 seconds
         el.style.display = el.getAttribute('data-conversation') === conversationId ? 'block' : 'none';
     });
 
-            fetchMessages(conversationId);
+    // Clear the set of displayed message IDs when opening a new chat
+    displayedMessageIds.clear();
+
+            
             markMessagesAsRead(conversationId); // Mark messages as read when conversation is opened
         }
 
@@ -491,6 +501,8 @@ setInterval(pollUnseenMessages, 1000); // Poll every 5 seconds
         console.error('Error:', error);
     });
 }
+
+
 
 
         function openNewConversationModal() {

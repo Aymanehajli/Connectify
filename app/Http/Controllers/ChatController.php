@@ -75,8 +75,8 @@ public function markAsRead(Request $request) {
 
     ChMessage::where('from_id', $conversationId)
            ->where('to_id', $authUserId)
-           ->where('seen', false)
-           ->update(['seen' => true]);
+           ->where('seen', "0")
+           ->update(['seen' => "1"]);
 
     return response()->json(['success' => true]);
 }

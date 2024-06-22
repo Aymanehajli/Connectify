@@ -1,10 +1,9 @@
 @include('components.master')
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-
 <center>
   <div class="container">
-    <div class="profile-header">
+    <div class="profile-header d-flex align-items-center">
       <div class="profile-avatar">
         <img src="{{ asset('storage/' . $user->image) }}" alt="Avatar" width="100">
       </div>
@@ -14,40 +13,41 @@
         
         @if (auth()->id() != $user->id)
           @if (!$isBlocked)
-            <div id="acceptBtnContainer"></div>
-            <div class="row">
+            <div class="d-flex justify-content-center mt-3" id="button-container">
+            @if (!$user->isBlockedBy(auth()->user()))
+              <div id="acceptBtnContainer"></div>
               <div id="friendship-buttons"></div>
-              <form id="sendMessageForm">
+              <form id="sendMessageForm" class="d-inline">
                 @csrf
                 <input type="hidden" name="from_id" value="{{ auth()->id() }}">
                 <input id="profileIdInput" type="hidden" name="to_id" value="{{ $user->id }}">
                 <input type="hidden" name="body" value="Hello, I want to connect with you!">
-                <button type="button" id="sendMessageBtn" data-profile-id="{{ $user->id }}">Message</button>
+                <button type="button" id="sendMessageBtn" data-profile-id="{{ $user->id }}" class="btn btn-info ml-2">Message</button>
               </form>
+              @endif
               @if (!$user->isBlockedBy(auth()->user()))
-                <form action="{{ route('block', $user->id) }}" method="POST">
+                <form action="{{ route('block', $user->id) }}" method="POST" class="d-inline ml-2">
                   @csrf
-                  <button type="submit" class="btn btn-danger">Block</button>
+                  <button type="submit" class="btn btn-danger ml-2">Block</button>
                 </form>
               @elseif ($auth1->hasBlocked($user))
-                <form action="{{ route('unblock', $user->id) }}" method="POST">
+                <form action="{{ route('unblock', $user->id) }}" method="POST" class="d-inline ml-2">
                   @csrf
-                  <button type="submit" class="btn btn-primary">Unblock</button>
+                  <button type="submit" class="btn btn-primary ml-2">Unblock</button>
                 </form>
               @endif
             </div>
           @endif
-        
         @else
-        <form action="{{route('settings.index')}}">
-          <button type="submite" class="btn btn-primary">Edit account</button>
-        </form>
-        
+          <form action="{{route('settings.index')}}" class="d-inline">
+            <button type="submit" class="btn btn-primary ml-2">Edit account</button>
+          </form>
         @endif
       </div>
     </div>
   </div>
 </center>
+
 
 <br><br>
 
@@ -129,7 +129,7 @@
 @endif
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
 <script>
     $(document).ready(function () {
@@ -139,7 +139,7 @@
     function addFriend() {
         axios.post("{{ route('friend-request.send', $user->id) }}")
             .then(function (response) {
-                alert(response.data.message);
+                
                 checkFriendship();
             })
             .catch(function (error) {
@@ -150,7 +150,7 @@
     function removeRequest() {
         axios.post("{{ route('remove.request', $user->id) }}")
             .then(function (response) {
-                alert(response.data.message);
+                
                 checkFriendship();
             })
             .catch(function (error) {
@@ -163,7 +163,7 @@
             _token: '{{ csrf_token() }}'
         })
             .then(function (response) {
-                alert(response.data.message);
+                
                 checkFriendship();
             })
             .catch(function (error) {
@@ -176,13 +176,13 @@
             .then(function (response) {
                 var buttonsHtml = '';
                 if (response.data.friends) {
-                    buttonsHtml += '<button disabled>Friends</button>';
+                    buttonsHtml += '<button class="btn btn-success" disabled>Friends</button>';
                 } else if (response.data.friendRequestReceived) {
-                    buttonsHtml += '<button onclick="acceptFriend()">Accept Friend Request</button>';
+                    buttonsHtml += '<button class="btn btn-primary" onclick="acceptFriend()">Accept Friend Request</button>';
                 } else if (response.data.friendRequestSent) {
-                    buttonsHtml += '<button onclick="removeRequest()">Remove Request</button>';
+                    buttonsHtml += '<button class="btn btn-warning" onclick="removeRequest()">Remove Request</button>';
                 } else {
-                    buttonsHtml += '<button onclick="addFriend()">Send Request</button>';
+                    buttonsHtml += '<button class="btn btn-primary" onclick="addFriend()">Send Request</button>';
                 }
                 $('#friendship-buttons').html(buttonsHtml);
             })
@@ -192,42 +192,37 @@
     }
 </script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const sendMessageBtn = document.getElementById('sendMessageBtn');
-        const profileIdInput = document.getElementById('profileIdInput');
-
-        sendMessageBtn.addEventListener('click', function () {
-            const formData = new FormData(document.getElementById('sendMessageForm'));
-            formData.append('to_id', profileIdInput.value);
-
-            fetch("{{ route('chat.send') }}", {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRF-Token': '{{ csrf_token() }}',
-                },
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Message sent successfully!');
-                } else {
-                    alert('Error sending message. Please try again.');
-                }
-            })
-            .catch(error => {
-                console.error('Error sending message:', error);
-                alert('Error sending message. Please try again.');
-            });
-        });
-    });
-</script>
-
 <style>
-  .sticky-top {
-    position: -webkit-sticky;
-    position: sticky;
-    top: 20px; /* Adjust this value to control the sticky position */
+  .profile-header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  .profile-avatar img {
+    border-radius: 50%;
+    margin-right: 20px;
+  }
+  .profile-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .profile-info h1 {
+    margin: 0;
+    font-size: 1.5em; /* Adjusted smaller font size */
+  }
+  .profile-info p {
+    color: gray;
+    margin-top: 5px;
+    font-size: 1em; /* Adjusted smaller font size */
+  }
+  #button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    width: 100%;
+  }
+  #button-container .btn {
+    margin-left: 10px;
   }
 </style>

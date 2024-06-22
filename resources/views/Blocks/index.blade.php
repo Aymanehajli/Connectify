@@ -1,5 +1,6 @@
 @include('navbar.nav')
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -67,6 +68,10 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
+
+@php 
+$authid = auth()->id();
+@endphp
 
 
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
