@@ -23,9 +23,15 @@ class LoginController extends Controller
 
     public function show(){
 
-
-        return view('login.show');
+return view('login.show');
+        
     }
+
+    public function show1(){
+
+        return view('login.test');
+                
+            }
     
     public function login(Request $request) :RedirectResponse{
         

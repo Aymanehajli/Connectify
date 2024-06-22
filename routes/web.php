@@ -79,6 +79,7 @@ Route::get('/notifications/fetch', [NotificationController::class, 'showNotifica
 
 Route::get('formul', [test::class, 'formul']);
 
+Route::get('loginform1', [LoginController::class, 'show1'])->name('loginshow1');
 
 Route::get('loginform', [LoginController::class, 'show'])->name('loginshow');
 Route::post('login', [LoginController::class, 'login'])->name('login');
