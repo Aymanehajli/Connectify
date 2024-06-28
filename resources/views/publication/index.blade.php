@@ -24,7 +24,7 @@
     <div class="col-md-4">
       <div class="sticky-top">
         <!-- Friends Section -->
-        <div class="card shadow-sm border mb-3">
+        <div class="card shadow-sm border mb-3 friends-section">
           <div class="card-header d-flex justify-content-between align-items-center">
             <h3>Friends</h3>
             <a href="/friends" class="text-muted">See All</a>
@@ -47,7 +47,7 @@
         </div>
 
         <!-- Friend Suggestions Section -->
-        <div class="card shadow-sm border">
+        <div class="card shadow-sm border mb-3 suggestions-section">
           <div class="card-header d-flex justify-content-between align-items-center">
             <h3>Friend Suggestions</h3>
           </div>
@@ -69,11 +69,10 @@
           </div>
         </div>
 
-
-        <!--Online Friend Section -->
-        <div class="card shadow-sm border">
+        <!-- Online Friends Section -->
+        <div class="card shadow-sm border online-section">
           <div class="card-header d-flex justify-content-between align-items-center">
-            <h3>Online friends</h3>
+            <h3>Online Friends</h3>
           </div>
           <div class="card-body">
             @foreach($activeUsers as $activeUser)
@@ -88,8 +87,6 @@
             @endforeach
           </div>
         </div>
-
-
       </div>
     </div>
   </div>
@@ -101,4 +98,17 @@
     position: sticky;
     top: 20px; /* Adjust this value to control the sticky position */
   }
+  .friends-section, .suggestions-section, .online-section {
+    max-height: 300px; /* Adjust this value to control the height */
+    overflow-y: auto;
+  }
+  
+  .list-group-item {
+    padding: 8px; /* Reduce padding to make the items more compact */
+  }
+  .btn-sm {
+    padding: 2px 6px; /* Adjust padding to make the buttons smaller */
+    font-size: 0.875rem; /* Adjust font size to make the buttons smaller */
+  }
+  
 </style>

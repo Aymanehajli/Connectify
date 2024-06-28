@@ -171,6 +171,7 @@ public function dislike(Request $request, $id)
             $formfields['video'] = $request->file('video')->store('publicationvideo', 'public');
         }
         $formfields['user_id']=Auth::id();
+        
         Publication::create($formfields);
         return to_route('publication.index')->with('success','Votre compte est bien crée') ;
     }

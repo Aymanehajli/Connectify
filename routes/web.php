@@ -14,9 +14,9 @@ use App\Models\Block;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+//Route::get('/', function () {
+  //  return view('welcome');
+//});
 
 
 
@@ -81,7 +81,7 @@ Route::get('formul', [test::class, 'formul']);
 
 Route::get('loginform1', [LoginController::class, 'show1'])->name('loginshow1');
 
-Route::get('loginform', [LoginController::class, 'show'])->name('loginshow');
+Route::get('/', [LoginController::class, 'show'])->name('loginshow');
 Route::post('login', [LoginController::class, 'login'])->name('login');
 Route::get('HomePage', [LoginController::class, 'Home'])->name('homePage');
 Route::get('logout', [LoginController::class, 'logout'])->name('logout');

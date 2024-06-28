@@ -5,6 +5,7 @@
 @endphp
 
 
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -130,7 +131,7 @@
                     success: function(response) {
                         console.log("Request succeeded:", response);
                         button.closest('.friend-request-card').remove();
-                        alert(response.success);
+                        
                     },
                     error: function(xhr) {
                         console.log("Request failed:", xhr);
@@ -138,6 +139,7 @@
                     }
                 });
             });
+
 
             // Refuse friend request
             $('.refuse-request').on('click', function() {
@@ -154,7 +156,7 @@
                     success: function(response) {
                         console.log("Request succeeded:", response);
                         button.closest('.friend-request-card').remove();
-                        alert(response.success);
+                        
                     },
                     error: function(xhr) {
                         console.log("Request failed:", xhr);
